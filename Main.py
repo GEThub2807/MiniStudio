@@ -7,6 +7,7 @@ HAUTEUR = 800  # Hauteur de la fenêtre du jeu
 GRAVITE = 0.5
 VITESSE_X = 5
 VITESSE_Y = 10
+VITESSE_COURSE = 10  # Vitesse de déplacement en mode course
 PERSONNAGE_LARGEUR = 50  # Largeur du personnage
 PERSONNAGE_HAUTEUR = 50  # Hauteur du personnage
 
@@ -34,6 +35,7 @@ position_y = 400
 vitesse_x = 0
 vitesse_y = 0
 nombre_sauts = 0
+is_running = False  # Variable pour vérifier si la touche Shift est enfoncée
 
 # Fonction de mouvement du personnage
 def deplacer_personnage():
@@ -70,9 +72,19 @@ while running:
             elif event.key == K_SPACE and nombre_sauts < 2:
                 vitesse_y = -VITESSE_Y
                 nombre_sauts += 1
+            elif event.key == K_LSHIFT or event.key == K_RSHIFT:
+                if not is_running:
+                    VITESSE_X = VITESSE_COURSE
+                    is_running = True  # La touche Shift est enfoncée
         elif event.type == KEYUP:
-            if event.key == K_LEFT or event.key == K_RIGHT:
+            if event.key == K_LEFT and vitesse_x < 0:
                 vitesse_x = 0
+            elif event.key == K_RIGHT and vitesse_x > 0:
+                vitesse_x = 0
+            elif event.key == K_LSHIFT or event.key == K_RSHIFT:
+                if is_running:
+                    VITESSE_X = 5
+                    is_running = False  # La touche Shift est relâchée
 
     # Déplacer le personnage
     deplacer_personnage()
@@ -86,7 +98,7 @@ while running:
     # Mettre à jour l'affichage
     pygame.display.flip()
 
-    # Limiter la vitesse de rafraîchissement à 60 FPS
+    # Limiter la vitesse de rafraîchissement à x FPS
     clock.tick(60)
 
 # Quitter Pygame
