@@ -17,13 +17,30 @@ pygame.init()
 # Définir la taille de la fenêtre du jeu
 fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
 
+
+# Creer une classe pour le joueur
+class Player(pygame.sprite.Sprite):
+
+    def __init__(self):
+        super().__init__()
+        self.health = 100
+        self.max_health = 100
+        self.image = pygame.image.load('Assets/rat.png')
+        self.rect = self.image.get_rect()
+
+
+
+
+
 # Charger les images des personnages et du fond
 try:
     fond = pygame.image.load("Assets/Fond_Game.jpg").convert()
+
     fond = pygame.transform.scale(fond,(LARGEUR,HAUTEUR))
 
-    personnage = pygame.image.load("Assets/Cube.png").convert()
-    personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
+    personnage = Player()
+    personnage.image = pygame.transform.scale(personnage.image, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
+
 except pygame.error as e:
     print("Erreur lors du chargement des images :", str(e))
     pygame.quit()
@@ -99,7 +116,7 @@ while running:
     fenetre.blit(fond, (0, 0))
 
     # Afficher le personnage à sa position actuelle
-    fenetre.blit(personnage, (position_x, position_y))
+    fenetre.blit(personnage.image, (position_x, position_y))
 
     # Mettre à jour l'affichage
     pygame.display.flip()
