@@ -1,3 +1,4 @@
+
 import pygame
 from pygame.locals import *
 
@@ -76,6 +77,8 @@ while running:
                 if not is_running:
                     VITESSE_X = VITESSE_COURSE
                     is_running = True  # La touche Shift est enfoncée
+            elif event.key == K_ESCAPE:
+                running = False
         elif event.type == KEYUP:
             if event.key == K_LEFT and vitesse_x < 0:
                 vitesse_x = 0
@@ -89,11 +92,13 @@ while running:
     # Déplacer le personnage
     deplacer_personnage()
 
-    # Effacer l'écran avec une couleur de fond
-    fenetre.fill((0, 0, 0))
+    # Afficher le fond à l'arrière-plan
+    fenetre.blit(fond, (0,0))
 
     # Afficher le personnage à sa position actuelle
     fenetre.blit(personnage, (position_x, position_y))
+
+
 
     # Mettre à jour l'affichage
     pygame.display.flip()
