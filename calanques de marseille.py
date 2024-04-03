@@ -12,6 +12,9 @@ VITESSE_COURSE = 10  # Vitesse de déplacement en mode course
 PERSONNAGE_LARGEUR = 50  # Largeur du personnage
 PERSONNAGE_HAUTEUR = 50  # Hauteur du personnage
 
+# Charge le fichier audio
+#son = pygame.mixer.Sound("chemin/vers/ton/fichier/audio.wav")
+
 # Initialisation de Pygame
 pygame.init()
 
@@ -105,6 +108,15 @@ while running:
 
     # Limiter la vitesse de rafraîchissement à x FPS
     clock.tick(60)
+
+# Joue le son
+son.play()
+
+# Attends que le son se termine
+pygame.time.delay(son.get_length() * 1000)  # Convertit la durée du son en millisecondes
+
+# Arrête le son
+son.stop()
 
 # Quitter Pygame
 pygame.quit()
