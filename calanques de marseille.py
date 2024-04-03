@@ -20,7 +20,7 @@ fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
 
 # Charger les images des personnages et du fond
 try:
-    fond = pygame.image.load("Assets/backgroubd.jpg").convert()
+    fond = pygame.image.load("Assets/background.jpg").convert()
     personnage = pygame.image.load("Assets/perso.png").convert()
     personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
 except pygame.error as e:
@@ -93,7 +93,7 @@ while running:
     deplacer_personnage()
 
     # Afficher le fond à l'arrière-plan
-    fenetre.blit(fond, (0,0))
+    fenetre.blit(fond, (200,500))
 
     # Afficher le personnage à sa position actuelle
     fenetre.blit(personnage, (position_x, position_y))
