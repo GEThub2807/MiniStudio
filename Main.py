@@ -97,9 +97,7 @@ while running:
 
     # Afficher le personnage à sa position actuelle
     fenetre.blit(personnage, (position_x, position_y))
-
-
-
+    
     # Mettre à jour l'affichage
     pygame.display.flip()
 
