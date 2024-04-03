@@ -1,4 +1,3 @@
-
 import pygame
 from pygame.locals import *
 
@@ -20,7 +19,9 @@ fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
 
 # Charger les images des personnages et du fond
 try:
-    fond = pygame.image.load("Assets/Fond.jpg").convert()
+    fond = pygame.image.load("Assets/Fond_Game.jpg").convert()
+    fond = pygame.transform.scale(fond,(LARGEUR,HAUTEUR))
+
     personnage = pygame.image.load("Assets/Cube.png").convert()
     personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
 except pygame.error as e:
@@ -37,6 +38,7 @@ vitesse_x = 0
 vitesse_y = 0
 nombre_sauts = 0
 is_running = False  # Variable pour vérifier si la touche Shift est enfoncée
+
 
 # Fonction de mouvement du personnage
 def deplacer_personnage():
@@ -56,6 +58,7 @@ def deplacer_personnage():
     # Réinitialiser le nombre de sauts si le personnage touche le sol
     if position_y >= HAUTEUR - PERSONNAGE_HAUTEUR:
         nombre_sauts = 0
+
 
 # Boucle principale du jeu
 running = True
@@ -93,12 +96,10 @@ while running:
     deplacer_personnage()
 
     # Afficher le fond à l'arrière-plan
-    fenetre.blit(fond, (0,0))
+    fenetre.blit(fond, (0, 0))
 
     # Afficher le personnage à sa position actuelle
     fenetre.blit(personnage, (position_x, position_y))
-
-
 
     # Mettre à jour l'affichage
     pygame.display.flip()
