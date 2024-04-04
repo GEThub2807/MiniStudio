@@ -121,7 +121,7 @@ while running:
     # Mettre à jour l'affichage
     pygame.display.flip()
 
-    # Limiter la vitesse de rafraîchissement à x FPS
+    # Limiter la vitesse de rafraîchissement à (x) FPS
     clock.tick(60)
 
 # Quitter Pygame
