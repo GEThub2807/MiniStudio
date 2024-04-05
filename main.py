@@ -1,128 +1,88 @@
 import pygame
-from pygame.locals import *
+import sys
 
-# Constantes
-LARGEUR = 1400  # Largeur de la fenêtre du jeu
-HAUTEUR = 800  # Hauteur de la fenêtre du jeu
-GRAVITE = 0.5
-VITESSE_X = 5
-VITESSE_Y = 10
-VITESSE_COURSE = 10  # Vitesse de déplacement en mode course
-PERSONNAGE_LARGEUR = 50  # Largeur du personnage
-PERSONNAGE_HAUTEUR = 50  # Hauteur du personnage
-
-# Initialisation de Pygame
-pygame.init()
-
-# Définir la taille de la fenêtre du jeu
-fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
+from player import Player
 
 
-# Creer une classe pour le joueur
-class Player(pygame.sprite.Sprite):
-
+class Jeu:
     def __init__(self):
-        super().__init__()
-        self.health = 100
-        self.max_health = 100
+        self.ecran = pygame.display.set_mode((1400, 800))
+        pygame.display.set_caption('Jeu of The Year')
+        self.Game_Running = True
+        self.Nb_Sauts = 0
+        self.player_x, self.player_y = 100, 400
+        self.vitesse_x, self.vitesse_y = 0, 0
         self.image = pygame.image.load('Assets/rat.png')
-        self.rect = self.image.get_rect()
+        self.image = pygame.transform.scale(self.image, (50, 50))
+        self.player = Player(self.player_x, self.player_y, self.image, self.vitesse_x, self.vitesse_y)
+        self.background = pygame.image.load("Assets/Fond_Game.jpg").convert()
+        self.background = pygame.transform.scale(self.background, (1400, 800))
+
+    def deplacer_personnage(self, gravity):
+
+        # Appliquer la gravité au personnage
+        self.player.vitesse_y += gravity
+
+        # Mettre à jour la position du personnage
+        self.player.y += self.player.vitesse_y
+        self.player.x += self.player.vitesse_x
+
+        # Limiter la position du personnage à l'écran
+        self.player.x = max(0, min(self.player.x, 1400-50))
+        self.player.y = max(0, min(self.player.y,800-50 ))
 
 
+        # Réinitialiser le nombre de sauts si le personnage touche le sol
+        if self.player.y >= 800 - 50 :
+            self.Nb_Sauts = 0
 
 
+    # Déf la boucle principale
+    def Boucle_Principale(self):
+        GRAVITE = 0.5
+        VITESSE_X = 10
+        VITESSE_Y = 10
+        VITESSE_COURSE = 10
 
-# Charger les images des personnages et du fond
-try:
-    fond = pygame.image.load("Assets/Fond_Game.jpg").convert()
+        is_running = False
+        clock = pygame.time.Clock()
+        while self.Game_Running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT:
+                        self.player.vitesse_x = -VITESSE_X
+                    elif event.key == pygame.K_RIGHT:
+                        self.player.vitesse_x = VITESSE_X
+                    elif event.key == pygame.K_SPACE and self.Nb_Sauts < 2:
+                        self.player.vitesse_y = -VITESSE_Y
+                        self.Nb_Sauts += 1
+                    elif event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
+                        if not is_running:
+                            VITESSE_X = VITESSE_COURSE
+                            is_running = True  # La touche Shift est enfoncée
+                    elif event.key == pygame.K_ESCAPE:
+                        sys.exit()
+                elif event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LEFT and self.player.vitesse_x < 0:
+                        self.player.vitesse_x = 0
+                    elif event.key == pygame.K_RIGHT and self.player.vitesse_x > 0:
+                        self.player.vitesse_x = 0
+                    elif event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
+                        if is_running:
+                            VITESSE_X = 5
+                            is_running = False  # La touche Shift est relâchée
 
-    fond = pygame.transform.scale(fond,(LARGEUR,HAUTEUR))
+            self.deplacer_personnage(GRAVITE)
+            self.ecran.blit(self.background, (0, 0))
+            self.ecran.blit(self.player.image, (self.player.x, self.player.y))
+            pygame.display.flip()
+            clock.tick(60)
 
-    personnage = Player()
-    personnage.image = pygame.transform.scale(personnage.image, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
 
-except pygame.error as e:
-    print("Erreur lors du chargement des images :", str(e))
+# Lance l'instance de jeu
+if __name__ == '__main__':
+    pygame.init()
+    Jeu().Boucle_Principale()
     pygame.quit()
-    exit()
-
-# Position initiale du personnage
-position_x = 100
-position_y = 400
-
-# Variables de mouvement du personnage
-vitesse_x = 0
-vitesse_y = 0
-nombre_sauts = 0
-is_running = False  # Variable pour vérifier si la touche Shift est enfoncée
-
-
-# Fonction de mouvement du personnage
-def deplacer_personnage():
-    global position_x, position_y, vitesse_x, vitesse_y, nombre_sauts
-
-    # Appliquer la gravité au personnage
-    vitesse_y += GRAVITE
-
-    # Mettre à jour la position du personnage
-    position_x += vitesse_x
-    position_y += vitesse_y
-
-    # Limiter la position du personnage à l'écran
-    position_x = max(0, min(position_x, LARGEUR - PERSONNAGE_LARGEUR))
-    position_y = max(0, min(position_y, HAUTEUR - PERSONNAGE_HAUTEUR))
-
-    # Réinitialiser le nombre de sauts si le personnage touche le sol
-    if position_y >= HAUTEUR - PERSONNAGE_HAUTEUR:
-        nombre_sauts = 0
-
-
-# Boucle principale du jeu
-running = True
-clock = pygame.time.Clock()
-while running:
-    # Gestion des événements
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            running = False
-        elif event.type == KEYDOWN:
-            if event.key == K_LEFT:
-                vitesse_x = -VITESSE_X
-            elif event.key == K_RIGHT:
-                vitesse_x = VITESSE_X
-            elif event.key == K_SPACE and nombre_sauts < 2:
-                vitesse_y = -VITESSE_Y
-                nombre_sauts += 1
-            elif event.key == K_LSHIFT or event.key == K_RSHIFT:
-                if not is_running:
-                    VITESSE_X = VITESSE_COURSE
-                    is_running = True  # La touche Shift est enfoncée
-            elif event.key == K_ESCAPE:
-                running = False
-        elif event.type == KEYUP:
-            if event.key == K_LEFT and vitesse_x < 0:
-                vitesse_x = 0
-            elif event.key == K_RIGHT and vitesse_x > 0:
-                vitesse_x = 0
-            elif event.key == K_LSHIFT or event.key == K_RSHIFT:
-                if is_running:
-                    VITESSE_X = 5
-                    is_running = False  # La touche Shift est relâchée
-
-    # Déplacer le personnage
-    deplacer_personnage()
-
-    # Afficher le fond à l'arrière-plan
-    fenetre.blit(fond, (0, 0))
-
-    # Afficher le personnage à sa position actuelle
-    fenetre.blit(personnage.image, (position_x, position_y))
-
-    # Mettre à jour l'affichage
-    pygame.display.flip()
-
-    # Limiter la vitesse de rafraîchissement à (x) FPS
-    clock.tick(60)
-
-# Quitter Pygame
-pygame.quit()
