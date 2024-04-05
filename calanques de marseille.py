@@ -1,19 +1,15 @@
-
 import pygame
 from pygame.locals import *
 
 # Constantes
-LARGEUR = 1400  # Largeur de la fenêtre du jeu
-HAUTEUR = 800  # Hauteur de la fenêtre du jeu
+LARGEUR = 800  # Largeur de la fenêtre du jeu
+HAUTEUR = 600  # Hauteur de la fenêtre du jeu
 GRAVITE = 0.5
 VITESSE_X = 5
 VITESSE_Y = 10
 VITESSE_COURSE = 10  # Vitesse de déplacement en mode course
 PERSONNAGE_LARGEUR = 50  # Largeur du personnage
 PERSONNAGE_HAUTEUR = 50  # Hauteur du personnage
-
-# Charge le fichier audio
-#son = pygame.mixer.Sound("chemin/vers/ton/fichier/audio.wav")
 
 # Initialisation de Pygame
 pygame.init()
@@ -33,13 +29,21 @@ except pygame.error as e:
 
 # Position initiale du personnage
 position_x = 100
-position_y = 400
+position_y = 350
 
 # Variables de mouvement du personnage
 vitesse_x = 0
 vitesse_y = 0
 nombre_sauts = 0
 is_running = False  # Variable pour vérifier si la touche Shift est enfoncée
+
+# Position initiale de la caméra
+camera_x = 0
+camera_y = 0
+
+# Taille de la zone de la caméra
+CAMERA_LARGEUR = LARGEUR // 2
+CAMERA_HAUTEUR = HAUTEUR // 2
 
 # Fonction de mouvement du personnage
 def deplacer_personnage():
@@ -59,6 +63,21 @@ def deplacer_personnage():
     # Réinitialiser le nombre de sauts si le personnage touche le sol
     if position_y >= HAUTEUR - PERSONNAGE_HAUTEUR:
         nombre_sauts = 0
+
+# Fonction pour déplacer la caméra
+# Fonction pour déplacer la caméra
+# Fonction pour déplacer la caméra
+# Fonction pour déplacer la caméra
+def deplacer_camera():
+    global camera_x
+
+    # Calculer la distance horizontale entre la position actuelle du joueur et la position centrale de la caméra
+    delta_x = position_x - (camera_x + CAMERA_LARGEUR // 2)
+
+    # Déplacer la caméra horizontalement en fonction de la distance calculée
+    camera_x += delta_x * 0.1
+
+
 
 # Boucle principale du jeu
 running = True
@@ -95,28 +114,20 @@ while running:
     # Déplacer le personnage
     deplacer_personnage()
 
+    # Déplacer la caméra
+    deplacer_camera()
+
     # Afficher le fond à l'arrière-plan
-    fenetre.blit(fond, (200,500))
+    fenetre.blit(fond, (0 - camera_x, 0 - camera_y))
 
-    # Afficher le personnage à sa position actuelle
-    fenetre.blit(personnage, (position_x, position_y))
-
-
+    # Afficher le personnage à sa position actuelle (par rapport à la caméra)
+    fenetre.blit(personnage, (position_x - camera_x, position_y - camera_y))
 
     # Mettre à jour l'affichage
     pygame.display.flip()
 
-    # Limiter la vitesse de rafraîchissement à x FPS
+    # Limiter la vitesse de rafraîchissement à 60 FPS
     clock.tick(60)
-
-# Joue le son
-son.play()
-
-# Attends que le son se termine
-pygame.time.delay(son.get_length() * 1000)  # Convertit la durée du son en millisecondes
-
-# Arrête le son
-son.stop()
 
 # Quitter Pygame
 pygame.quit()
