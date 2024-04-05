@@ -125,13 +125,10 @@ while running:
     deplacer_personnage()
 
     # Mettre à jour la position du PNJ (Vitesse)
-    if pnj_x < PNJ_ARRIVEE_X:
-        pnj_x += direction_pnj * 1
-    elif pnj_x > PNJ_ARRIVEE_X:
-        pnj_x -= direction_pnj * 1
+    pnj_x += direction_pnj * 1
 
-    # Inverser la direction du PNJ
-    if pnj_x <= PNJ_DEPART_X or pnj_x >= PNJ_ARRIVEE_X:
+    # Inverser la direction du PNJ s'il a atteint les limites
+    if (direction_pnj > 0 and pnj_x >= PNJ_ARRIVEE_X) or (direction_pnj < 0 and pnj_x <= PNJ_DEPART_X):
         direction_pnj *= -1
 
     # Vérifier la collision entre le personnage et le PNJ
