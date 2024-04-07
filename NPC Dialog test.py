@@ -85,16 +85,34 @@ def NPCQCM(count, dialogList, interactKey):
                         run = False
                 
                 # Selection
-                displayText(dialogList[selection], textFont, (147, 0, 191), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + spacing)
-                pygame.display.flip()
-                
-                if pressed[pygame.K_UP]:
-                    screen.fill(fill) # Clears the screen
+                if selection != 3 or selection != 1:
+                    displayText(dialogList[1], textFont, (147, 0, 191), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + spacing)
                     pygame.display.flip()
-                if pressed[pygame.K_DOWN]:
+                    print("reset")
+                
+                ###########################
+                if pressed[pygame.K_UP] and selection > 1 and count == 565654:
                     screen.fill(fill) # Clears the screen
-                    selection += selection
-                    displayText(dialogList[selection], textFont, (147, 0, 191), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + x*spacing)
+                    
+                    # Display the text
+                    for x in range(arrayLength):
+                        displayText(dialogList[x], textFont, (0, 0, 0), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + x*spacing)
+
+                    selection -= selection
+                    
+                    pygame.display.flip()
+                    
+                if pressed[pygame.K_DOWN] and selection < 3:
+                    screen.fill(fill) # Clears the screen
+                    
+                    # Display the text
+                    for x in range(arrayLength):
+                        displayText(dialogList[x], textFont, (0, 0, 0), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + x*spacing)
+                    
+                    selection = selection + 1
+                    
+                    displayText(dialogList[selection], textFont, (147, 0, 191), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + selection*spacing)
+                    
                     pygame.display.flip()
 
 
