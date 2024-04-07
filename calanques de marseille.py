@@ -11,7 +11,7 @@ VITESSE_Y = 10
 VITESSE_COURSE = 10  # Vitesse de déplacement en mode course
 PERSONNAGE_LARGEUR = 50  # Largeur du personnage
 PERSONNAGE_HAUTEUR = 50  # Hauteur du personnage
-NPC_VITESSE = 5 #vitesse des pnjs
+NPC_VITESSE= randint(-5, -3) if randint(0, 1) else randint(3, 5)
 
 # Initialisation de Pygame
 pygame.init()
@@ -122,10 +122,10 @@ def npc_move():
     global npc_pos_x, npc_pos_y, NPC_VITESSE
 
     # Vérifier si le PNJ est hors de l'écran à gauche ou à droite
-    if npc_pos_x >= LARGEUR :
+    if npc_pos_x >= LARGEUR and NPC_VITESSE > 0:
         npc_pos_x = 0 - lengthNpc[0]
 
-    if npc_pos_x <= 0 :
+    if npc_pos_x <= 0 - lengthNpc[0] and NPC_VITESSE < 0:
         npc_pos_x = LARGEUR + lengthNpc[0]
 
     # Mettre à jour la position horizontale du PNJ
