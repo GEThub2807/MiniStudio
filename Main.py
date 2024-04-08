@@ -1,5 +1,7 @@
 import pygame
 from pygame.locals import *
+import sys
+from Platforme import Platforme
 
 # Constantes
 LARGEUR = 1000  # Largeur de la fenêtre du jeu
@@ -140,6 +142,10 @@ while running:
     pnj_x += direction_pnj * 1
     if pnj_x <= 0 or pnj_x >= LARGEUR - PNJ_LARGEUR:
         direction_pnj *= -1
+
+    # Permet la colision avec les plateformes
+    plartforme = Platforme()
+    plartforme.colision_platforme()
 
     # Vérifier la collision entre le personnage et le PNJ
     collision_pnj()
