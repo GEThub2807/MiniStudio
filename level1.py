@@ -28,7 +28,7 @@ def run_game():
         personnage = pygame.image.load("Assets/perso.png").convert_alpha()
         personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
 
-        npc = pygame.image.load("Assets/npc.jpg").convert_alpha()
+        npc = pygame.image.load("Assets/pnj.png").convert_alpha()
         lengthNpc = npc.get_size()
         npc = pygame.transform.scale(npc, (lengthNpc[0], lengthNpc[1]))
 
