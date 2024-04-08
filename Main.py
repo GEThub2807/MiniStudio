@@ -19,7 +19,7 @@ fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
 
 # Charger les images des personnages et du fond
 try:
-    fond = pygame.image.load("Assets/Fond.jpg").convert()
+    fond = pygame.image.load("Assets/background.jpg").convert()
     personnage = pygame.image.load("Assets/Cube.png").convert()
     personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
 except pygame.error as e:

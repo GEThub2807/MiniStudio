@@ -12,7 +12,7 @@ pygame.init()
 
 # Chargement des ressources
 try:
-    fond = pygame.image.load("Assets/Fond.jpg").convert()
+    fond = pygame.image.load("Assets/background.jpg").convert()
 except pygame.error as e:
     print("Erreur lors du chargement des images :", str(e))
     pygame.quit()

@@ -1,4 +1,5 @@
-import py
+import pygame 
+
 # Constantes
 LARGEUR = 1400  # Largeur de la fenêtre du jeu
 HAUTEUR = 800  # Hauteur de la fenêtre du jeu
