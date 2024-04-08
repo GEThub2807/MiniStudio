@@ -4,8 +4,8 @@ from random import randint
 import time
 
 # Constantes
-LARGEUR = 1920  # Largeur de la fenêtre du jeu
-HAUTEUR = 1080 # Hauteur de la fenêtre du jeu
+LARGEUR = 800  # Largeur de la fenêtre du jeu
+HAUTEUR = 600 # Hauteur de la fenêtre du jeu
 GRAVITE = 0.5
 VITESSE_X = 5
 VITESSE_Y = 10
@@ -123,15 +123,15 @@ class NPC:
         self.velocity = velocity
         self.size = self.image.get_size()
 
+        self.change_image()
+
     def move(self):
-        self.pos_x += self.velocity
+        self.pos_x -= self.velocity
 
         # Vérifier si le PNJ est hors de l'écran à gauche ou à droite
-        if self.pos_x >= LARGEUR and self.velocity > 0:
-            self.pos_x = 0 - self.size[0]
+        if self.pos_x >= LARGEUR + lengthNpc[0] and self.velocity > 0:
             self.destroy()
         elif self.pos_x <= 0 - self.size[0] and self.velocity < 0:
-            self.pos_x = LARGEUR
             self.destroy()
 
     def change_image(self):
@@ -173,9 +173,9 @@ class NPCManager:
 
     def spawn_npc(self):
         # Coordonnées initiales aléatoires dans les limites de l'écran
-        initial_x = random.randint(0, LARGEUR - lengthNpc[0])  # Utiliser lengthNpc pour obtenir la taille du PNJ
-        spawn_y = random.randint(0, HAUTEUR - lengthNpc[1])
-        velocity = 1  # Vitesse constante pour cet exemple
+        initial_x = LARGEUR + lengthNpc[0]  # Utiliser lengthNpc pour obtenir la taille du PNJ
+        spawn_y = 500
+        velocity = 5  # Vitesse constante pour cet exemple
         return NPC(npc_images, initial_x, spawn_y, velocity)
 
 
@@ -222,7 +222,6 @@ while running:
     # Mettre à jour les positions et les actions des PNJs existants
     for npc in npc_manager.npcs:
         npc.move()
-        npc.change_image()
 
     # Déplacer le personnage
     deplacer_personnage()
