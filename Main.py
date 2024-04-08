@@ -78,22 +78,34 @@ def deplacer_personnage():
 def collision_pnj():
     global position_x, position_y, vitesse_x, vitesse_y
     
-    if position_x + PERSONNAGE_LARGEUR > pnj_x and position_x < pnj_x + PNJ_LARGEUR:
-        if position_y + PERSONNAGE_HAUTEUR > pnj_y and position_y < pnj_y + PNJ_HAUTEUR:
-            if vitesse_x > 0:
+    # Vérifier la collision uniquement si le personnage se déplace vers le PNJ
+    if vitesse_x > 0:
+        if position_x + PERSONNAGE_LARGEUR > pnj_x and position_x < pnj_x + PNJ_LARGEUR:
+            if position_y + PERSONNAGE_HAUTEUR > pnj_y and position_y < pnj_y + PNJ_HAUTEUR:
                 position_x = pnj_x - PERSONNAGE_LARGEUR
-            elif vitesse_x < 0:
+                vitesse_x = 0  # Arrêter le mouvement horizontal
+    elif vitesse_x < 0:
+        if position_x < pnj_x + PNJ_LARGEUR and position_x + PERSONNAGE_LARGEUR > pnj_x:
+            if position_y + PERSONNAGE_HAUTEUR > pnj_y and position_y < pnj_y + PNJ_HAUTEUR:
                 position_x = pnj_x + PNJ_LARGEUR
-            if vitesse_y > 0:
+                vitesse_x = 0  # Arrêter le mouvement horizontal
+            
+    # Même chose pour le mouvement vertical
+    if vitesse_y > 0:
+        if position_x + PERSONNAGE_LARGEUR > pnj_x and position_x < pnj_x + PNJ_LARGEUR:
+            if position_y + PERSONNAGE_HAUTEUR > pnj_y and position_y < pnj_y + PNJ_HAUTEUR:
                 position_y = pnj_y - PERSONNAGE_HAUTEUR
-            elif vitesse_y < 0:
+                vitesse_y = 0  # Arrêter le mouvement vertical
+    elif vitesse_y < 0:
+        if position_x + PERSONNAGE_LARGEUR > pnj_x and position_x < pnj_x + PNJ_LARGEUR:
+            if position_y < pnj_y + PNJ_HAUTEUR and position_y + PERSONNAGE_HAUTEUR > pnj_y:
                 position_y = pnj_y + PNJ_HAUTEUR
+                vitesse_y = 0  # Arrêter le mouvement vertical
 
 # Boucle principale du jeu
 running = True
 clock = pygame.time.Clock()
 while running:
-    # Gestion des événements
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
@@ -108,7 +120,7 @@ while running:
             elif event.key == K_LSHIFT or event.key == K_RSHIFT:
                 if not is_running:
                     VITESSE_X = VITESSE_COURSE
-                    is_running = True  # La touche Shift est enfoncée
+                    is_running = True
             elif event.key == K_ESCAPE:
                 running = False
         elif event.type == KEYUP:
@@ -119,34 +131,32 @@ while running:
             elif event.key == K_LSHIFT or event.key == K_RSHIFT:
                 if is_running:
                     VITESSE_X = 5
-                    is_running = False  # La touche Shift est relâchée
+                    is_running = False
 
     # Déplacer le personnage
     deplacer_personnage()
 
-    # Mettre à jour la position du PNJ (Vitesse)
+    # Déplacer le PNJ avec gestion de collision
     pnj_x += direction_pnj * 1
-
-    # Inverser la direction du PNJ s'il a atteint les limites
-    if (direction_pnj > 0 and pnj_x >= PNJ_ARRIVEE_X) or (direction_pnj < 0 and pnj_x <= PNJ_DEPART_X):
+    if pnj_x <= 0 or pnj_x >= LARGEUR - PNJ_LARGEUR:
         direction_pnj *= -1
 
     # Vérifier la collision entre le personnage et le PNJ
     collision_pnj()
 
     # Afficher le fond à l'arrière-plan
-    fenetre.blit(fond, (0,0))
+    fenetre.blit(fond, (0, 0))
 
     # Afficher le personnage à sa position actuelle
     fenetre.blit(personnage, (position_x, position_y))
 
     # Afficher le PNJ à sa position actuelle
     fenetre.blit(pnj, (pnj_x, pnj_y))
-    
+
     # Mettre à jour l'affichage
     pygame.display.flip()
-    
-    # Limiter la vitesse de rafraîchissement à x FPS
+
+    # Limiter la vitesse de rafraîchissement à 60 FPS
     clock.tick(60)
 
 # Quitter Pygame
