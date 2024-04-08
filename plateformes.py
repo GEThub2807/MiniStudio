@@ -9,4 +9,3 @@ class PlateformesRythm(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.image = image
-
