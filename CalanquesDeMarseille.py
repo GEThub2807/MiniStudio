@@ -1,7 +1,6 @@
 import pygame
 from pygame.locals import *
 from random import randint
-import time
 
 # Constantes
 LARGEUR = 1920  # Largeur de la fenêtre du jeu
@@ -85,8 +84,6 @@ def deplacer_personnage():
     # Réinitialiser le nombre de sauts si le personnage est au sol
     if position_y >= lengthFond[1] - PERSONNAGE_HAUTEUR - 300:
         nombre_sauts = 0
-
-
 
 # Fonction pour déplacer la caméra
 def deplacer_camera():

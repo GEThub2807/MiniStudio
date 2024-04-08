@@ -1,11 +1,12 @@
 import pygame
 from pygame.locals import *
 from random import randint
+import random
 
 def run_game():
     # Constantes
-    LARGEUR = 1920  # Largeur de la fenêtre du jeu
-    HAUTEUR = 1080 # Hauteur de la fenêtre du jeu
+    LARGEUR = 1920 # Largeur de la fenêtre du jeu
+    HAUTEUR = 1080  # Hauteur de la fenêtre du jeu
     GRAVITE = 0.5
     VITESSE_X = 5
     VITESSE_Y = 10
@@ -13,7 +14,7 @@ def run_game():
     PERSONNAGE_LARGEUR = 50  # Largeur du personnage
     PERSONNAGE_HAUTEUR = 50  # Hauteur du personnage
     """ NPC_VITESSE = randint(-5, -3) if randint(0, 1) else randint(3, 5) """
-    NPC_VITESSE = -5
+    NPC_VITESSE= randint(-5, -3) if randint(0, 1) else randint(3, 5)
 
     # Initialisation de Pygame
     pygame.init()
@@ -69,7 +70,7 @@ def run_game():
 
     # Fonction de mouvement du personnage
     def deplacer_personnage():
-        global position_x, position_y, vitesse_x, vitesse_y, nombre_sauts
+        nonlocal position_x, position_y, vitesse_x, vitesse_y, nombre_sauts
 
         # Appliquer la gravité au personnage
         vitesse_y += GRAVITE
@@ -108,8 +109,7 @@ def run_game():
         camera_x += delta_x * 0.1
         camera_y += delta_y * 0.1
 
-    import random
-
+    # Fonction pour déplacer les PNJs
     class NPC:
         def __init__(self, images, initial_x, spawn_y, velocity):
             self.images = images
@@ -140,9 +140,6 @@ def run_game():
         def draw(self, screen, camera_x, camera_y):
             screen.blit(self.image, (self.pos_x - camera_x, self.pos_y - camera_y))
 
-    # Créer une instance de la classe NPC
-    npc_images = [pnj1, pnj2, pnj3]
-    npc = NPC(npc_images, randint(0, lengthFond[0]), lengthFond[1] - 700, NPC_VITESSE)
     # Boucle principale du jeu
     running = True
     clock = pygame.time.Clock()
