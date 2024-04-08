@@ -14,10 +14,10 @@ PNJ_LARGEUR = 70  # Largeur du personnage
 PNJ_HAUTEUR = 130 # Hauteur du personnage
 
 # Constantes Platforme
-plateforme_y = 100
-plateforme_hauteur = 20
-platforme_largeur = 200 # Largeur de la plateforme (Modifiable)
-
+plateforme_y = 8  # Position Y de la plateforme (Modifiable)
+plateforme_hauteur = 1 # Hauteur de la plateforme (Modifiable)
+platforme_largeur = 20 # Largeur de la plateforme (Modifiable)
+rectangle = pygame.Rect(0, plateforme_y, platforme_largeur, plateforme_hauteur)
 # Points de départ et d'arrivée du PNJ
 PNJ_DEPART_X = 500
 PNJ_DEPART_Y = 400
@@ -127,6 +127,15 @@ def collision_plateforme():
         vitesse_y = 0
         nombre_sauts = 0
 
+def collision_rectangle():
+    global position_y, vitesse_y, nombre_sauts
+
+    if position_x + PERSONNAGE_LARGEUR > rectangle.left and position_x < rectangle.right:
+        if position_y + PERSONNAGE_HAUTEUR > rectangle.top and position_y < rectangle.bottom:
+            position_y = rectangle.top - PERSONNAGE_HAUTEUR
+            vitesse_y = 0
+            nombre_sauts = 0
+            
 # Boucle principale du jeu
 running = True
 clock = pygame.time.Clock()
@@ -169,6 +178,9 @@ while running:
 
     # Vérifier la collision entre le personnage et le PNJ
     collision_pnj()
+
+    # Dans la boucle principale, vérifiez la collision avec le rectangle
+    collision_rectangle()
 
     # Afficher le fond à l'arrière-plan
     fenetre.blit(fond, (0, 0))
