@@ -11,8 +11,8 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 interactKey = pygame.K_e
 
 # This is where the text is stored
-firstTextList = ["text 1", "text 2", "text 3"]
-qcm = ["QCM time!", "reponse 1", "reponse 2", "reponse 3"]
+firstTextList = ["texte 1", "texte 2", "texte 3"]
+qcm = ["QCM:", "reponse fausse", "reponse vraie", "reponse fausse"]
 
 # Fills the screen gray
 fill = (140, 140, 140)
