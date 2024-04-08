@@ -79,26 +79,26 @@ def NPCQCM(count, dialogList, interactKey):
                     arrayLength = len(dialogList)
                     for x in range(arrayLength):
                         displayText(dialogList[x], textFont, (0, 0, 0), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + x*spacing)
+                    # Initial selected
+                    displayText(dialogList[1], textFont, (147, 0, 191), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + spacing)
+                    pygame.display.flip()
                     
                     # Exit
                     if count == 1:
                         run = False
+                    
                 
                 # Selection
-                if selection != 3 or selection != 1:
-                    displayText(dialogList[1], textFont, (147, 0, 191), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + spacing)
-                    pygame.display.flip()
-                    print("reset")
                 
-                ###########################
-                if pressed[pygame.K_UP] and selection > 1 and count == 565654:
+                if pressed[pygame.K_UP] and selection > 1:
                     screen.fill(fill) # Clears the screen
                     
                     # Display the text
                     for x in range(arrayLength):
                         displayText(dialogList[x], textFont, (0, 0, 0), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + x*spacing)
-
-                    selection -= selection
+                    
+                    selection = selection - 1
+                    displayText(dialogList[selection], textFont, (147, 0, 191), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + selection*spacing)
                     
                     pygame.display.flip()
                     
@@ -110,7 +110,6 @@ def NPCQCM(count, dialogList, interactKey):
                         displayText(dialogList[x], textFont, (0, 0, 0), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + x*spacing)
                     
                     selection = selection + 1
-                    
                     displayText(dialogList[selection], textFont, (147, 0, 191), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + selection*spacing)
                     
                     pygame.display.flip()
