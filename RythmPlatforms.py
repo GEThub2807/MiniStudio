@@ -29,6 +29,24 @@ class Jeu:
                                  PlateformesRythm(500, 600, self.plateformes_image)
                                  ]
 
+    def Afficher_Plateformes_paires(self):
+        for i in range(0, len(self.plateformes_list)):
+            if i % 2 == 0:
+                self.ecran.blit(self.plateformes_list[i].image,
+                                (self.plateformes_list[i].x, self.plateformes_list[i].y))
+            else:
+                self.ecran.blit(self.plateformes_list[i].image,
+                                (self.plateformes_list[i].x, self.plateformes_list[i].y + 1000))
+
+    def Afficher_Plateformes_Impaires(self):
+        for j in range(0, len(self.plateformes_list)):
+            if j % 2 == 0:
+                self.ecran.blit(self.plateformes_list[j].image,
+                                (self.plateformes_list[j].x, self.plateformes_list[j].y + 1000))
+            else:
+                self.ecran.blit(self.plateformes_list[j].image,
+                                (self.plateformes_list[j].x, self.plateformes_list[j].y))
+
     def deplacer_personnage(self, gravity):
 
         # Appliquer la gravité au personnage
@@ -86,27 +104,10 @@ class Jeu:
             self.deplacer_personnage(GRAVITE)
             self.ecran.blit(self.background, (0, 0))
 
-
-
-
-
-            for i in range(0, len(self.plateformes_list)):
-                if i % 2 == 0:
-                    self.ecran.blit(self.plateformes_list[i].image,
-                                    (self.plateformes_list[i].x, self.plateformes_list[i].y))
-                else:
-                    self.ecran.blit(self.plateformes_list[i].image,
-                                    (self.plateformes_list[i].x, self.plateformes_list[i].y + 1000))
-
-            for j in range(0, len(self.plateformes_list)):
-                if j % 2 == 0:
-                    self.ecran.blit(self.plateformes_list[j].image,
-                                    (self.plateformes_list[j].x, self.plateformes_list[j].y + 1000))
-                else:
-                    self.ecran.blit(self.plateformes_list[j].image,
-                                    (self.plateformes_list[j].x, self.plateformes_list[j].y))
-
             self.ecran.blit(self.player.image, (self.player.x, self.player.y))
+
+            self.Afficher_Plateformes_Impaires()
+            self.Afficher_Plateformes_paires()
 
             pygame.display.flip()
 
