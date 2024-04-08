@@ -1,8 +1,3 @@
-# trigger event pour parler à des PNJ et afficher le dialogue
-# y'aura un PNJ qui te donne la win cond du niveau (pourquoi et qu'est-ce que t'as à faire içi)
-# t un autre qui te fais un QCM pour te donner un ticket pour dévérouiller la grande roue
-
-
 import pygame
 from pygame.locals import *
 
