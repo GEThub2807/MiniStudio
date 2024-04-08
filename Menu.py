@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 from tools import EventHandle
 import level1
+import level2
 pygame.init()
 
 pygame.mixer.init()
@@ -224,14 +225,17 @@ def playing_menu():
                 running = False
         retour_button_pos = (SCREEN_WIDTH/10, SCREEN_HEIGHT/10)
         lvl1_button_pos = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+        lvl2_button_pos = (SCREEN_WIDTH/2, SCREEN_HEIGHT/1.5)
         SCREEN.blit(fond, (0, 0))
         
         RETOUR_BUTTON = EventHandle(image=pygame.image.load("Assets/Play Rect.png"), pos=retour_button_pos, 
                     text_input="RETOUR", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
         LVL1_BUTTON = EventHandle(image=pygame.image.load("Assets/Play Rect.png"), pos=lvl1_button_pos, 
             text_input="NIVEAU 1", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+        LVL2_BUTTON = EventHandle(image=pygame.image.load("Assets/Play Rect.png"), pos=lvl2_button_pos, 
+            text_input="NIVEAU 2", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
         
-        for button in [RETOUR_BUTTON, LVL1_BUTTON]:
+        for button in [RETOUR_BUTTON, LVL1_BUTTON, LVL2_BUTTON]:
             button.update(SCREEN)
 
         for event in pygame.event.get():
@@ -241,7 +245,8 @@ def playing_menu():
                     main_menu()
                 if LVL1_BUTTON.checkForInput(MENU_MOUSE_POS):
                     level1.run_game()
-        
+                if LVL2_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    level2.run_game()
         
         pygame.display.update()
 
