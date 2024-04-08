@@ -203,6 +203,3 @@ def run_game():
 
     # Quitter Pygame après la sortie de la boucle principale
     pygame.quit()
-
-# Appeler la fonction pour exécuter le jeu
-
