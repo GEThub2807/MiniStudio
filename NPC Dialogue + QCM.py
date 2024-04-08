@@ -93,7 +93,6 @@ def NPCQCM(count, dialogList, interactKey):
                     if count == 1:
                         run = False
                     
-                
                 # Selection
                 if pressed[pygame.K_UP] and selection > 1: # Up
                     Select(arrayLength, dialogList, spacing, selection - 1)
