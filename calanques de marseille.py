@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 from random import randint
+import time
 
 # Constantes
 LARGEUR = 1600  # Largeur de la fenêtre du jeu
@@ -11,7 +12,8 @@ VITESSE_Y = 10
 VITESSE_COURSE = 10  # Vitesse de déplacement en mode course
 PERSONNAGE_LARGEUR = 50  # Largeur du personnage
 PERSONNAGE_HAUTEUR = 50  # Hauteur du personnage
-NPC_VITESSE= randint(-5, -3) if randint(0, 1) else randint(3, 5)
+""" NPC_VITESSE = randint(-5, -3) if randint(0, 1) else randint(3, 5) """
+NPC_VITESSE = -5
 
 # Initialisation de Pygame
 pygame.init()
@@ -28,9 +30,15 @@ try:
     personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
 
     
-    npc = pygame.image.load("Assets/npc.jpg").convert_alpha()
-    lengthNpc = npc.get_size()
-    npc = pygame.transform.scale(npc, (lengthNpc[0], lengthNpc[1]))
+    pnj1 = pygame.image.load("Assets/pnj1.png").convert_alpha()
+    pnj2 = pygame.image.load("Assets/pnj2.png").convert_alpha()
+    pnj3 = pygame.image.load("Assets/pnj3.png").convert_alpha()
+    
+    # Liste de tous les pnjs
+    npc = [pnj1, pnj2, pnj3]
+
+    pnj_choice = randint(0, len(npc) - 1)
+    lengthNpc = npc[pnj_choice].get_size()
 
 except pygame.error as e:
     print("Erreur lors du chargement des images :", str(e))
@@ -116,10 +124,10 @@ def deplacer_camera():
     npc_pos_y = position_y
 
     # Limiter la position du PNJ à l'écran
-    npc_pos_y = max(0, min(npc_pos_y, HAUTEUR - lengthNpc[1] - 500)) """
+    npc_pos_y = max(0, min(npc_pos_y, HAUTEUR - lengthNpc[1] - 500))"""
 
 def npc_move():
-    global npc_pos_x, npc_pos_y, NPC_VITESSE
+    global npc_pos_x, npc_pos_y, NPC_VITESSE, lengthNpc
 
     # Vérifier si le PNJ est hors de l'écran à gauche ou à droite
     if npc_pos_x >= LARGEUR and NPC_VITESSE > 0:
@@ -127,6 +135,7 @@ def npc_move():
 
     if npc_pos_x <= 0 - lengthNpc[0] and NPC_VITESSE < 0:
         npc_pos_x = LARGEUR + lengthNpc[0]
+
 
     # Mettre à jour la position horizontale du PNJ
     npc_pos_x += NPC_VITESSE
@@ -136,7 +145,6 @@ def npc_move():
 
     # Limiter la position du PNJ à l'écran
     npc_pos_y = max(0, min(npc_pos_y, HAUTEUR - lengthNpc[1] - 500))
-
 
 # Boucle principale du jeu
 running = True
@@ -177,6 +185,9 @@ while running:
     deplacer_camera()
 
     # Déplacer les pnjs
+    if npc_pos_x < 0 - lengthNpc[0] or npc_pos_x > LARGEUR :
+        pnj_choice = randint(0, len(npc) - 1)
+        lengthNpc = npc[pnj_choice].get_size()
     npc_move()
 
     fenetre.fill((0,0,0))
@@ -188,7 +199,7 @@ while running:
     fenetre.blit(personnage, (position_x - camera_x, position_y - camera_y))
 
     # Afficher le pnj à sa position actuelle 
-    fenetre.blit(npc, (npc_pos_x, npc_pos_y))    
+    fenetre.blit(npc[pnj_choice], (npc_pos_x, npc_pos_y))    
 
     # Mettre à jour l'affichage
     pygame.display.flip()
