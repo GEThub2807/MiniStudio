@@ -1,7 +1,5 @@
 import pygame
 from pygame.locals import *
-import sys
-from Platforme import Platforme, plateforme_y
 
 # Constantes
 LARGEUR = 1000  # Largeur de la fenêtre du jeu
@@ -14,6 +12,11 @@ PERSONNAGE_LARGEUR = 50  # Largeur du personnage
 PERSONNAGE_HAUTEUR = 50  # Hauteur du personnage
 PNJ_LARGEUR = 70  # Largeur du personnage
 PNJ_HAUTEUR = 130 # Hauteur du personnage
+
+# Constantes Platforme
+plateforme_y = 100
+plateforme_hauteur = 20
+platforme_largeur = 200 # Largeur de la plateforme (Modifiable)
 
 # Points de départ et d'arrivée du PNJ
 PNJ_DEPART_X = 500
@@ -104,6 +107,26 @@ def collision_pnj():
                 position_y = pnj_y + PNJ_HAUTEUR
                 vitesse_y = 0  # Arrêter le mouvement vertical
 
+def collision_plateforme():
+    global position_y, vitesse_y, nombre_sauts
+
+    # Vérification de la collision entre le joueur et la plateforme
+    if position_y + PERSONNAGE_HAUTEUR < plateforme_y:
+        # Le joueur est au-dessus de la plateforme
+        pass
+    elif position_y + PERSONNAGE_HAUTEUR - vitesse_y <= plateforme_y:
+        # Le joueur traverse la plateforme par le bas
+        # Ajuster la position et réinitialiser les sauts
+        position_y = plateforme_y - PERSONNAGE_HAUTEUR
+        vitesse_y = 0
+        nombre_sauts = 0
+    else:
+        # Le joueur est en collision avec la plateforme depuis le haut
+        # Ajuster la position pour empêcher le passage à travers la plateforme
+        position_y = plateforme_y + plateforme_hauteur
+        vitesse_y = 0
+        nombre_sauts = 0
+
 # Boucle principale du jeu
 running = True
 clock = pygame.time.Clock()
@@ -144,11 +167,6 @@ while running:
     if pnj_x <= 0 or pnj_x >= LARGEUR - PNJ_LARGEUR:
         direction_pnj *= -1
 
-    # Permet la colision avec les plateformes
-    plartforme = Platforme()
-    plartforme.colision_platforme()
-    rectangle_image = pygame.image.load("Assets/Rectangle.png")
-
     # Vérifier la collision entre le personnage et le PNJ
     collision_pnj()
 
@@ -162,6 +180,8 @@ while running:
     fenetre.blit(pnj, (pnj_x, pnj_y))
 
     # Afficher l'image du rectangle à la position plateforme_y
+    rectangle_image = pygame.Surface((platforme_largeur, plateforme_hauteur))
+    rectangle_image = pygame.image.load("Assets/Rectangle.png").convert_alpha()
     fenetre.blit(rectangle_image, (0, plateforme_y))
 
     # Mettre à jour l'affichage
