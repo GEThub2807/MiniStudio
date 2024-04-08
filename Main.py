@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 import sys
-from Platforme import Platforme
+from Platforme import Platforme, plateforme_y
 
 # Constantes
 LARGEUR = 1000  # Largeur de la fenêtre du jeu
@@ -140,12 +140,14 @@ while running:
 
     # Déplacer le PNJ avec gestion de collision
     pnj_x += direction_pnj * 1
+
     if pnj_x <= 0 or pnj_x >= LARGEUR - PNJ_LARGEUR:
         direction_pnj *= -1
 
     # Permet la colision avec les plateformes
     plartforme = Platforme()
     plartforme.colision_platforme()
+    rectangle_image = pygame.image.load("Assets/Rectangle.png")
 
     # Vérifier la collision entre le personnage et le PNJ
     collision_pnj()
@@ -158,6 +160,9 @@ while running:
 
     # Afficher le PNJ à sa position actuelle
     fenetre.blit(pnj, (pnj_x, pnj_y))
+
+    # Afficher l'image du rectangle à la position plateforme_y
+    fenetre.blit(rectangle_image, (0, plateforme_y))
 
     # Mettre à jour l'affichage
     pygame.display.flip()

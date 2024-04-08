@@ -1,5 +1,8 @@
-plateforme_y = 300
-position_y = 200
+import pygame
+
+plateforme_y = 100
+position_y = 100
+vitesse_y = 0
 plateforme_hauteur = 20
 PERSONNAGE_HAUTEUR = 50
 
