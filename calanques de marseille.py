@@ -129,9 +129,7 @@ class NPC:
         self.pos_x -= self.velocity
 
         # Vérifier si le PNJ est hors de l'écran à gauche ou à droite
-        if self.pos_x >= LARGEUR + lengthNpc[0] and self.velocity > 0:
-            self.destroy()
-        elif self.pos_x <= 0 - self.size[0] and self.velocity < 0:
+        if self.pos_x <= 0 - self.size[0] and self.velocity < 0:
             self.destroy()
 
     def change_image(self):
@@ -173,7 +171,7 @@ class NPCManager:
 
     def spawn_npc(self):
         # Coordonnées initiales aléatoires dans les limites de l'écran
-        initial_x = LARGEUR + lengthNpc[0]  # Utiliser lengthNpc pour obtenir la taille du PNJ
+        initial_x = LARGEUR + lengthNpc[0] + camera_x  # Utiliser lengthNpc pour obtenir la taille du PNJ
         spawn_y = 500
         velocity = 5  # Vitesse constante pour cet exemple
         return NPC(npc_images, initial_x, spawn_y, velocity)
