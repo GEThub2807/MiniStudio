@@ -29,6 +29,24 @@ class Jeu:
                                  PlateformesRythm(500, 600, self.plateformes_image)
                                  ]
 
+    def Afficher_Plateformes_paires(self):
+        for i in range(0, len(self.plateformes_list)):
+            if i % 2 == 0:
+                self.ecran.blit(self.plateformes_list[i].image,
+                                (self.plateformes_list[i].x, self.plateformes_list[i].y))
+            else:
+                self.ecran.blit(self.plateformes_list[i].image,
+                                (self.plateformes_list[i].x, self.plateformes_list[i].y + 1000))
+
+    def Afficher_Plateformes_Impaires(self):
+        for j in range(0, len(self.plateformes_list)):
+            if j % 2 == 0:
+                self.ecran.blit(self.plateformes_list[j].image,
+                                (self.plateformes_list[j].x, self.plateformes_list[j].y + 1000))
+            else:
+                self.ecran.blit(self.plateformes_list[j].image,
+                                (self.plateformes_list[j].x, self.plateformes_list[j].y))
+
     def deplacer_personnage(self, gravity):
 
         # Appliquer la gravité au personnage
@@ -52,7 +70,9 @@ class Jeu:
         VITESSE_X = 10
         VITESSE_Y = 10
         VITESSE_COURSE = 10
-        time_stamp = 5000
+        Timer = 0
+        Loop = 1
+        pygame.time.set_timer(USEREVENT, 1000)
 
         is_running = False
         clock = pygame.time.Clock()
@@ -83,34 +103,27 @@ class Jeu:
                         if is_running:
                             VITESSE_X = 5
                             is_running = False  # La touche Shift est relâchée
+                elif event.type == USEREVENT:
+                    Timer += 1
+
+                    if Timer == 3:
+                        Loop += 1
+                        Timer = 0
+
             self.deplacer_personnage(GRAVITE)
             self.ecran.blit(self.background, (0, 0))
 
-
-
-
-
-            for i in range(0, len(self.plateformes_list)):
-                if i % 2 == 0:
-                    self.ecran.blit(self.plateformes_list[i].image,
-                                    (self.plateformes_list[i].x, self.plateformes_list[i].y))
-                else:
-                    self.ecran.blit(self.plateformes_list[i].image,
-                                    (self.plateformes_list[i].x, self.plateformes_list[i].y + 1000))
-
-            for j in range(0, len(self.plateformes_list)):
-                if j % 2 == 0:
-                    self.ecran.blit(self.plateformes_list[j].image,
-                                    (self.plateformes_list[j].x, self.plateformes_list[j].y + 1000))
-                else:
-                    self.ecran.blit(self.plateformes_list[j].image,
-                                    (self.plateformes_list[j].x, self.plateformes_list[j].y))
-
             self.ecran.blit(self.player.image, (self.player.x, self.player.y))
 
+
+            if Loop % 2 == 0:
+                self.Afficher_Plateformes_paires()
+            else:
+                self.Afficher_Plateformes_Impaires()
+            clock.tick(60)
             pygame.display.flip()
 
-            clock.tick(60)
+            print(Timer)
 
 
 # Lance l'instance de jeu
