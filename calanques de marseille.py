@@ -4,8 +4,8 @@ from random import randint
 import time
 
 # Constantes
-LARGEUR = 1600  # Largeur de la fenêtre du jeu
-HAUTEUR = 900  # Hauteur de la fenêtre du jeu
+LARGEUR = 1920  # Largeur de la fenêtre du jeu
+HAUTEUR = 1080 # Hauteur de la fenêtre du jeu
 GRAVITE = 0.5
 VITESSE_X = 5
 VITESSE_Y = 10
