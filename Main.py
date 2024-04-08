@@ -56,6 +56,11 @@ def deplacer_personnage():
     if position_y >= HAUTEUR - PERSONNAGE_HAUTEUR:
         nombre_sauts = 0
 
+"""     if monpersonnage.collidelist(mescollisions) == -1:
+    #Le personnage ne peut pas bouger ! Il est en collision !
+    else:
+    # Le personnage peut bouger, il n'est pas en collision """
+    
 # Boucle principale du jeu
 running = True
 clock = pygame.time.Clock()
