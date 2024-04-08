@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 from tools import EventHandle
-
+import level1
 pygame.init()
 
 pygame.mixer.init()
@@ -18,7 +18,7 @@ SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE
 pygame.display.set_caption("Menu")
 
 try:
-    fond = pygame.image.load("Assets/Fond.jpg").convert()
+    fond = pygame.image.load("Assets/menu.png").convert()
 except pygame.error as e:
     print("Erreur lors du chargement des images :", str(e))
     pygame.quit()
@@ -30,14 +30,14 @@ def get_font(size):
 def main_menu():
     global SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN
     running = True
-    a = 255
-    b = 255
-    c = 255
-    
-    play_button_pos = (SCREEN_WIDTH/2, SCREEN_HEIGHT * 0.25)
-    options_button_pos = (SCREEN_WIDTH/2, SCREEN_HEIGHT * 0.4)
-    credit_button_pos = (SCREEN_WIDTH/2, SCREEN_HEIGHT * 0.55)
-    quit_button_pos = (SCREEN_WIDTH/2, SCREEN_HEIGHT * 0.7)
+    a = 50
+    b = 50
+    c = 50
+    adjustpose = 3.4
+    play_button_pos = (SCREEN_WIDTH/adjustpose, SCREEN_HEIGHT * 0.25 -40)
+    options_button_pos = (SCREEN_WIDTH/adjustpose, SCREEN_HEIGHT * 0.4 -40)
+    credit_button_pos = (SCREEN_WIDTH/adjustpose, SCREEN_HEIGHT * 0.55 -40)
+    quit_button_pos = (SCREEN_WIDTH/adjustpose, SCREEN_HEIGHT * 0.7 -40)
 
     
     while running:
@@ -49,9 +49,9 @@ def main_menu():
                 running = False
 
         SCREEN.blit(fond, (0, 0))
-
-        MENU_TEXT = get_font(100).render("Vive la France", True, (a, b, c)) 
-        MENU_RECT = MENU_TEXT.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 10))
+        adjustpose = 1.4
+        MENU_TEXT = get_font(100).render("French Odyssey", True, (a, b, c)) 
+        MENU_RECT = MENU_TEXT.get_rect(center=(SCREEN_WIDTH // adjustpose, SCREEN_HEIGHT * 0.25 -40))
         SCREEN.blit(MENU_TEXT, MENU_RECT)
 
         PLAY_BUTTON = EventHandle(image=pygame.image.load("Assets/Play Rect.png"), pos=play_button_pos, 
@@ -70,11 +70,14 @@ def main_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click_sound
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    a = 0
+                    playing_menu()
+                    click_sound.play()
                 if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                     options()
+                    click_sound.play()
                 if CREDIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     credit()
+                    click_sound.play()
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     pygame.quit()
                     pygame.exit()
@@ -125,14 +128,12 @@ def credit():
 
         pygame.display.update()
 
-
-
 def options():
     global SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN
     volume_slider_width = 200
     volume_slider_height = 20
     volume_slider_x = (SCREEN_WIDTH - volume_slider_width) // 2
-    volume_slider_y = SCREEN_HEIGHT // 2
+    volume_slider_y = SCREEN_HEIGHT // 1.5
     volume_min = 0
     volume_max = 100
     volume = pygame.mixer.music.get_volume() * volume_max
@@ -143,13 +144,14 @@ def options():
 
         pygame.draw.rect(SCREEN, "gray", (volume_slider_x, volume_slider_y, volume_slider_width, volume_slider_height))
         pygame.draw.rect(SCREEN, "green", (volume_slider_x, volume_slider_y, (volume / volume_max) * volume_slider_width, volume_slider_height))
-
-
+        adjustpose = 0.64
         OPTIONS_TEXT = get_font(45).render("This is the OPTIONS screen.", True, "Black")
-        VOLUME = get_font(45).render("VOLUME", True, "Black")
-        RECT_VOLUME = VOLUME.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT * 0.64))
+        VOLUME = get_font(75).render("VOLUME", True, "Black")  # Texte pour le volume
+        RECT_VOLUME = VOLUME.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT * adjustpose))  # Rectangle pour centrer le texte
         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT * 0.24))
-        SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT,RECT_VOLUME)
+        SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
+        SCREEN.blit(VOLUME, RECT_VOLUME)  # Afficher le texte "VOLUME"
+
         if FULLSCREEN == True:
             OPTIONS_SCREEN_SIZE = EventHandle(image=None, pos=(SCREEN_WIDTH/2, SCREEN_HEIGHT * 0.54), 
                                 text_input="FENETRER", font=get_font(75), base_color="Black", hovering_color="Green")
@@ -173,7 +175,6 @@ def options():
         else:
             OPTIONS_SCREEN_FULL.update(SCREEN)
 
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -192,13 +193,16 @@ def options():
 
                 if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
                     main_menu()
+                    click_sound.play()
                 if FULLSCREEN == True and OPTIONS_SCREEN_SIZE.checkForInput(OPTIONS_MOUSE_POS):
                     new_width = 1280
                     new_height = 720
                     FULLSCREEN = False
                     pygame.display.set_mode((new_width, new_height), pygame.RESIZABLE)
                     SCREEN_WIDTH, SCREEN_HEIGHT = new_width, new_height
+                    click_sound.play()
                 elif FULLSCREEN == False and OPTIONS_SCREEN_FULL.checkForInput(OPTIONS_MOUSE_POS):
+                    click_sound.play()
                     new_width = screen_info.current_w
                     new_height = screen_info.current_h
                     FULLSCREEN = True
@@ -206,5 +210,40 @@ def options():
                     SCREEN_WIDTH, SCREEN_HEIGHT = new_width, new_height
 
         pygame.display.update()
+
+def playing_menu():
+    global SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN
+    running = True
+    
+    while running:
+
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
+        
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                running = False
+        retour_button_pos = (SCREEN_WIDTH/10, SCREEN_HEIGHT/10)
+        lvl1_button_pos = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+        SCREEN.blit(fond, (0, 0))
+        
+        RETOUR_BUTTON = EventHandle(image=pygame.image.load("Assets/Play Rect.png"), pos=retour_button_pos, 
+                    text_input="RETOUR", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+        LVL1_BUTTON = EventHandle(image=pygame.image.load("Assets/Play Rect.png"), pos=lvl1_button_pos, 
+            text_input="NIVEAU 1", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+        
+        for button in [RETOUR_BUTTON, LVL1_BUTTON]:
+            button.update(SCREEN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                click_sound.play()
+                if RETOUR_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    main_menu()
+                if LVL1_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    level1.run_game()
+        
+        
+        pygame.display.update()
+
 main_menu()
 pygame.quit()
