@@ -4,9 +4,9 @@ from pygame.locals import *
 
 class PlateformesRythm(pygame.sprite.Sprite):
 
-    def __init__(self, rect):
+    def __init__(self, x,y,image):
         super().__init__()
-        self.rect = rect
+        self.x = x
+        self.y = y
+        self.image = image
 
-    def afficher(self, surface):
-        pygame.draw.rect(surface, (0, 255, 0), self.rect)

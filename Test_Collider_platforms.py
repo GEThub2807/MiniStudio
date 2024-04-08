@@ -3,11 +3,10 @@ import sys
 
 from player import Player
 from plateformes import PlateformesRythm
-
+from pygame.locals import *
 
 class Jeu:
     def __init__(self):
-
         self.ecran = pygame.display.set_mode((1400, 800))
         pygame.display.set_caption('Jeu of The Year')
         self.Game_Running = True
@@ -15,14 +14,18 @@ class Jeu:
         self.player_x, self.player_y = 100, 400
         self.vitesse_x, self.vitesse_y = 0, 0
         self.image = pygame.image.load('Assets/rat.png')
-        self.image = pygame.transform.scale(self.image, (50, 50))
-        self.player = Player(self.player_x, self.player_y, self.image, self.vitesse_x, self.vitesse_y)
-        self.player_collider = self.image.get_rect(bottomleft=(self.player.y, self.player.x))
+        self.player = Player(self.player_x, self.player_y, pygame.transform.scale(self.image, (50, 50)), self.vitesse_x,
+                             self.vitesse_y)
         self.background = pygame.image.load("Assets/Fond_Game.jpg").convert()
         self.background = pygame.transform.scale(self.background, (1400, 800))
-        self.plateforme_groupe = pygame.sprite.Group()
-        self.plateforme_list_rect = [pygame.Rect(0, 300, 300, 50), pygame.Rect(800, 300, 300, 50)]
-        self.resistance = [0, 0]
+        self.plateformes_image = pygame.image.load("Assets/Plateformes.png").convert()
+        self.plateformes_image =
+        self.plateformes_list = [PlateformesRythm(100, 100, pygame.transform.scale(self.plateformes_image, (100, 50))),
+                                 PlateformesRythm(100, 100, pygame.transform.scale(self.plateformes_image, (100, 50))),
+                                 PlateformesRythm(100, 100, pygame.transform.scale(self.plateformes_image, (100, 50))),
+                                 PlateformesRythm(100, 100, pygame.transform.scale(self.plateformes_image, (100, 50))),
+                                 PlateformesRythm(100, 100, pygame.transform.scale(self.plateformes_image, (100, 50)))
+                                 ]
 
     def deplacer_personnage(self, gravity):
 
@@ -47,6 +50,7 @@ class Jeu:
         VITESSE_X = 10
         VITESSE_Y = 10
         VITESSE_COURSE = 10
+        time_stamp = 5000
 
         is_running = False
         clock = pygame.time.Clock()
@@ -77,17 +81,21 @@ class Jeu:
                         if is_running:
                             VITESSE_X = 5
                             is_running = False  # La touche Shift est relâchée
-
-            self.player_collider = self.image.get_rect(bottomleft=(self.player.y, self.player.x))
-            for rectangle in self.plateforme_list_rect:
-                plateforme = PlateformesRythm(rectangle)
-                self.plateforme_groupe.add(plateforme)
-
             self.deplacer_personnage(GRAVITE)
             self.ecran.blit(self.background, (0, 0))
+
+            time_now = pygame.time.get_ticks()
+            if time_now + time_stamp == pygame.time.get_ticks():
+                for i in range(0,len(self.plateformes_list,1)):
+                    if i%2 == 0:
+                        self.ecran.blit(self.plateformes_list[i].image,(self.plateformes_list[i].x,self.plateformes_list[i].y))
+
+
+
+
+
             self.ecran.blit(self.player.image, (self.player.x, self.player.y))
 
-            print(self.player_collider.midbottom)
             pygame.display.flip()
             clock.tick(60)
 
