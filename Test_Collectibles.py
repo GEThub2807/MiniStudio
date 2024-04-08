@@ -3,7 +3,7 @@ import sys
 
 from pygame.locals import *
 from player import Player
-from plateformes import PlateformesRythm
+from Collectibles import Collectibles
 
 
 class Jeu:
@@ -19,33 +19,12 @@ class Jeu:
                              self.vitesse_y)
         self.background = pygame.image.load("Assets/Fond_Game.jpg").convert()
         self.background = pygame.transform.scale(self.background, (1400, 800))
-        self.plateformes_image = pygame.image.load("Assets/Plateformes.png").convert()
-        self.plateformes_image = pygame.transform.scale(self.plateformes_image, (50, 50))
+        self.Collectibles_image = pygame.image.load("Assets/Collectible.jpg").convert()
+        self.Collectibles_image = pygame.transform.scale(self.Collectibles_image,(50,50))
 
-        self.plateformes_list = [PlateformesRythm(100, 600, self.plateformes_image),
-                                 PlateformesRythm(200, 600, self.plateformes_image),
-                                 PlateformesRythm(300, 600, self.plateformes_image),
-                                 PlateformesRythm(400, 600, self.plateformes_image),
-                                 PlateformesRythm(500, 600, self.plateformes_image)
-                                 ]
-
-    def Afficher_Plateformes_paires(self):
-        for i in range(0, len(self.plateformes_list)):
-            if i % 2 == 0:
-                self.ecran.blit(self.plateformes_list[i].image,
-                                (self.plateformes_list[i].x, self.plateformes_list[i].y))
-            else:
-                self.ecran.blit(self.plateformes_list[i].image,
-                                (self.plateformes_list[i].x, self.plateformes_list[i].y + 1000))
-
-    def Afficher_Plateformes_Impaires(self):
-        for j in range(0, len(self.plateformes_list)):
-            if j % 2 == 0:
-                self.ecran.blit(self.plateformes_list[j].image,
-                                (self.plateformes_list[j].x, self.plateformes_list[j].y + 1000))
-            else:
-                self.ecran.blit(self.plateformes_list[j].image,
-                                (self.plateformes_list[j].x, self.plateformes_list[j].y))
+        self.Collectibles_list = [Collectibles(200, 750, self.Collectibles_image),
+                                  Collectibles(500, 750, self.Collectibles_image),
+                                  Collectibles(800, 750, self.Collectibles_image)]
 
     def deplacer_personnage(self, gravity):
 
@@ -70,9 +49,6 @@ class Jeu:
         VITESSE_X = 10
         VITESSE_Y = 10
         VITESSE_COURSE = 10
-        Timer = 0
-        Loop = 1
-        pygame.time.set_timer(USEREVENT, 1000)
 
         is_running = False
         clock = pygame.time.Clock()
@@ -103,24 +79,15 @@ class Jeu:
                         if is_running:
                             VITESSE_X = 5
                             is_running = False  # La touche Shift est relâchée
-                elif event.type == USEREVENT:
-                    Timer += 1
-
-                    if Timer == 3:
-                        Loop += 1
-                        Timer = 0
-
             self.deplacer_personnage(GRAVITE)
             self.ecran.blit(self.background, (0, 0))
+            for collectible in self.Collectibles_list:
+                self.ecran.blit(collectible.image,(collectible.x,collectible.y))
 
             self.ecran.blit(self.player.image, (self.player.x, self.player.y))
 
-            self.Afficher_Plateformes_Impaires()
-            self.Afficher_Plateformes_paires()
-
+            clock.tick(60)
             pygame.display.flip()
-
-            print(Timer)
 
 
 # Lance l'instance de jeu
