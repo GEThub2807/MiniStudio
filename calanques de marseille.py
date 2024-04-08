@@ -129,10 +129,10 @@ class NPC:
         # Vérifier si le PNJ est hors de l'écran à gauche ou à droite
         if self.pos_x >= LARGEUR and self.velocity > 0:
             self.pos_x = 0 - self.size[0]
-            self.change_image()
+            self.destroy()
         elif self.pos_x <= 0 - self.size[0] and self.velocity < 0:
             self.pos_x = LARGEUR
-            self.change_image()
+            self.destroy()
 
     def change_image(self):
         # Changer l'image du PNJ de manière aléatoire
@@ -142,9 +142,48 @@ class NPC:
     def draw(self, screen, camera_x, camera_y):
         screen.blit(self.image, (self.pos_x - camera_x, self.pos_y - camera_y))
 
+    def destroy(self):
+        # Code pour détruire le NPC
+        self.pos_x = -1000  # Déplacer le NPC hors de l'écran
+        self.pos_y = -1000
+        self.velocity = 0  # Arrêter le mouvement
+
 # Créer une instance de la classe NPC
 npc_images = [pnj1, pnj2, pnj3]
 npc = NPC(npc_images, randint(0, lengthFond[0]), lengthFond[1] - 700, NPC_VITESSE)
+
+import random
+
+class NPCManager:
+    def __init__(self, spawn_interval):
+        self.spawn_interval = spawn_interval  # Intervalle de spawn en secondes
+        self.last_spawn_time = time.time()  # Temps du dernier spawn
+        self.npcs = []  # Liste des PNJs
+
+    def update(self):
+        current_time = time.time()
+        # Vérifier si le temps écoulé depuis le dernier spawn est supérieur à l'intervalle
+        if current_time - self.last_spawn_time >= self.spawn_interval:
+            # Ajouter un nouveau PNJ
+            npc = self.spawn_npc()  # Créer une nouvelle instance de NPC
+            if npc:
+                self.npcs.append(npc)
+            # Mettre à jour le temps du dernier spawn
+            self.last_spawn_time = current_time
+
+    def spawn_npc(self):
+        # Coordonnées initiales aléatoires dans les limites de l'écran
+        initial_x = random.randint(0, LARGEUR - lengthNpc[0])  # Utiliser lengthNpc pour obtenir la taille du PNJ
+        spawn_y = random.randint(0, HAUTEUR - lengthNpc[1])
+        velocity = 1  # Vitesse constante pour cet exemple
+        return NPC(npc_images, initial_x, spawn_y, velocity)
+
+
+
+spawn_interval = 3  # Intervalle de spawn en secondes
+npc_manager = NPCManager(spawn_interval)
+
+
 # Boucle principale du jeu
 running = True
 clock = pygame.time.Clock()
@@ -177,25 +216,32 @@ while running:
                     VITESSE_X = 5
                     is_running = False  # La touche Shift est relâchée
 
+    # Mettre à jour le gestionnaire de PNJs pour gérer les spawns
+    npc_manager.update()
+
+    # Mettre à jour les positions et les actions des PNJs existants
+    for npc in npc_manager.npcs:
+        npc.move()
+        npc.change_image()
+
     # Déplacer le personnage
     deplacer_personnage()
 
     # Déplacer la caméra
     deplacer_camera()
 
-    # Déplacer les pnjs
-    npc.move()
+    # Effacer l'écran
+    fenetre.fill((0, 0, 0))
 
-    fenetre.fill((0,0,0))
-
-    # Afficher le fond à l'arrière-plan
+    # Afficher le fond
     fenetre.blit(fond, (0 - camera_x, 0 - camera_y))
 
-    # Afficher le personnage à sa position actuelle (par rapport à la caméra)
+    # Afficher le personnage
     fenetre.blit(personnage, (position_x - camera_x, position_y - camera_y))
 
-    # Afficher le pnj à sa position actuelle
-    npc.draw(fenetre, camera_x, camera_y)
+    # Afficher les PNJs
+    for npc in npc_manager.npcs:
+        npc.draw(fenetre, camera_x, camera_y)
 
     # Mettre à jour l'affichage
     pygame.display.flip()
