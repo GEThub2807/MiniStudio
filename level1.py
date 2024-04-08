@@ -4,15 +4,16 @@ from random import randint
 
 def run_game():
     # Constantes
-    LARGEUR = 1920 # Largeur de la fenêtre du jeu
-    HAUTEUR = 1080  # Hauteur de la fenêtre du jeu
+    LARGEUR = 1920  # Largeur de la fenêtre du jeu
+    HAUTEUR = 1080 # Hauteur de la fenêtre du jeu
     GRAVITE = 0.5
     VITESSE_X = 5
     VITESSE_Y = 10
     VITESSE_COURSE = 10  # Vitesse de déplacement en mode course
     PERSONNAGE_LARGEUR = 50  # Largeur du personnage
     PERSONNAGE_HAUTEUR = 50  # Hauteur du personnage
-    NPC_VITESSE= randint(-5, -3) if randint(0, 1) else randint(3, 5)
+    """ NPC_VITESSE = randint(-5, -3) if randint(0, 1) else randint(3, 5) """
+    NPC_VITESSE = -5
 
     # Initialisation de Pygame
     pygame.init()
@@ -28,9 +29,16 @@ def run_game():
         personnage = pygame.image.load("Assets/perso.png").convert_alpha()
         personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
 
-        npc = pygame.image.load("Assets/pnj.png").convert_alpha()
-        lengthNpc = npc.get_size()
-        npc = pygame.transform.scale(npc, (lengthNpc[0], lengthNpc[1]))
+        
+        pnj1 = pygame.image.load("Assets/pnj1.png").convert_alpha()
+        pnj2 = pygame.image.load("Assets/pnj2.png").convert_alpha()
+        pnj3 = pygame.image.load("Assets/pnj3.png").convert_alpha()
+        
+        # Liste de tous les pnjs
+        npc = [pnj1, pnj2, pnj3]
+
+        pnj_choice = randint(0, len(npc) - 1)
+        lengthNpc = npc[pnj_choice].get_size()
 
     except pygame.error as e:
         print("Erreur lors du chargement des images :", str(e))
@@ -61,7 +69,7 @@ def run_game():
 
     # Fonction de mouvement du personnage
     def deplacer_personnage():
-        nonlocal position_x, position_y, vitesse_x, vitesse_y, nombre_sauts
+        global position_x, position_y, vitesse_x, vitesse_y, nombre_sauts
 
         # Appliquer la gravité au personnage
         vitesse_y += GRAVITE
@@ -100,20 +108,41 @@ def run_game():
         camera_x += delta_x * 0.1
         camera_y += delta_y * 0.1
 
-    # Fonction pour déplacer les PNJs
-    def npc_move():
-        nonlocal npc_pos_x, npc_pos_y, NPC_VITESSE
+    import random
 
-        if npc_pos_x >= LARGEUR and NPC_VITESSE > 0:
-            npc_pos_x = 0 - lengthNpc[0]
+    class NPC:
+        def __init__(self, images, initial_x, spawn_y, velocity):
+            self.images = images
+            self.image_index = 0
+            self.image = images[self.image_index]
+            self.pos_x = initial_x
+            self.spawn_y = spawn_y
+            self.pos_y = spawn_y
+            self.velocity = velocity
+            self.size = self.image.get_size()
 
-        if npc_pos_x <= 0 - lengthNpc[0] and NPC_VITESSE < 0:
-            npc_pos_x = LARGEUR + lengthNpc[0]
+        def move(self):
+            self.pos_x += self.velocity
 
-        npc_pos_x += NPC_VITESSE
-        npc_pos_y = position_y
-        npc_pos_y = max(0, min(npc_pos_y, HAUTEUR - lengthNpc[1] - 500))
+            # Vérifier si le PNJ est hors de l'écran à gauche ou à droite
+            if self.pos_x >= LARGEUR and self.velocity > 0:
+                self.pos_x = 0 - self.size[0]
+                self.change_image()
+            elif self.pos_x <= 0 - self.size[0] and self.velocity < 0:
+                self.pos_x = LARGEUR
+                self.change_image()
 
+        def change_image(self):
+            # Changer l'image du PNJ de manière aléatoire
+            self.image_index = random.randint(0, len(self.images) - 1)
+            self.image = self.images[self.image_index]
+
+        def draw(self, screen, camera_x, camera_y):
+            screen.blit(self.image, (self.pos_x - camera_x, self.pos_y - camera_y))
+
+    # Créer une instance de la classe NPC
+    npc_images = [pnj1, pnj2, pnj3]
+    npc = NPC(npc_images, randint(0, lengthFond[0]), lengthFond[1] - 700, NPC_VITESSE)
     # Boucle principale du jeu
     running = True
     clock = pygame.time.Clock()
@@ -153,7 +182,7 @@ def run_game():
         deplacer_camera()
 
         # Déplacer les PNJs
-        npc_move()
+        npc.move()
 
         fenetre.fill((0,0,0))
 
