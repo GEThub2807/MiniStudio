@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 from random import randint
+import time
 
 # Constantes
 LARGEUR = 1600  # Largeur de la fenêtre du jeu
@@ -11,7 +12,8 @@ VITESSE_Y = 10
 VITESSE_COURSE = 10  # Vitesse de déplacement en mode course
 PERSONNAGE_LARGEUR = 50  # Largeur du personnage
 PERSONNAGE_HAUTEUR = 50  # Hauteur du personnage
-NPC_VITESSE= randint(-5, -3) if randint(0, 1) else randint(3, 5)
+""" NPC_VITESSE = randint(-5, -3) if randint(0, 1) else randint(3, 5) """
+NPC_VITESSE = -5
 
 # Initialisation de Pygame
 pygame.init()
@@ -28,9 +30,15 @@ try:
     personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
 
     
-    npc = pygame.image.load("Assets/npc.jpg").convert_alpha()
-    lengthNpc = npc.get_size()
-    npc = pygame.transform.scale(npc, (lengthNpc[0], lengthNpc[1]))
+    pnj1 = pygame.image.load("Assets/pnj1.png").convert_alpha()
+    pnj2 = pygame.image.load("Assets/pnj2.png").convert_alpha()
+    pnj3 = pygame.image.load("Assets/pnj3.png").convert_alpha()
+    
+    # Liste de tous les pnjs
+    npc = [pnj1, pnj2, pnj3]
+
+    pnj_choice = randint(0, len(npc) - 1)
+    lengthNpc = npc[pnj_choice].get_size()
 
 except pygame.error as e:
     print("Erreur lors du chargement des images :", str(e))
@@ -102,42 +110,41 @@ def deplacer_camera():
     camera_x += delta_x * 0.1
     camera_y += delta_y * 0.1
 
-""" def npc_move():
-    global npc_pos_x, npc_pos_y, NPC_VITESSE
+import random
 
-    # Vérifier si le PNJ est hors de l'écran à gauche ou à droite
-    if npc_pos_x >= LARGEUR or npc_pos_x <= 0 - lengthNpc[0]:
-        NPC_VITESSE *= -1  # Inverser la direction du déplacement
+class NPC:
+    def __init__(self, images, initial_x, spawn_y, velocity):
+        self.images = images
+        self.image_index = 0
+        self.image = images[self.image_index]
+        self.pos_x = initial_x
+        self.spawn_y = spawn_y
+        self.pos_y = spawn_y
+        self.velocity = velocity
+        self.size = self.image.get_size()
 
-    # Mettre à jour la position horizontale du PNJ
-    npc_pos_x += NPC_VITESSE
+    def move(self):
+        self.pos_x += self.velocity
 
-    # Aligner la position verticale du PNJ sur celle du personnage
-    npc_pos_y = position_y
+        # Vérifier si le PNJ est hors de l'écran à gauche ou à droite
+        if self.pos_x >= LARGEUR and self.velocity > 0:
+            self.pos_x = 0 - self.size[0]
+            self.change_image()
+        elif self.pos_x <= 0 - self.size[0] and self.velocity < 0:
+            self.pos_x = LARGEUR
+            self.change_image()
 
-    # Limiter la position du PNJ à l'écran
-    npc_pos_y = max(0, min(npc_pos_y, HAUTEUR - lengthNpc[1] - 500)) """
+    def change_image(self):
+        # Changer l'image du PNJ de manière aléatoire
+        self.image_index = random.randint(0, len(self.images) - 1)
+        self.image = self.images[self.image_index]
 
-def npc_move():
-    global npc_pos_x, npc_pos_y, NPC_VITESSE
+    def draw(self, screen, camera_x, camera_y):
+        screen.blit(self.image, (self.pos_x - camera_x, self.pos_y - camera_y))
 
-    # Vérifier si le PNJ est hors de l'écran à gauche ou à droite
-    if npc_pos_x >= LARGEUR and NPC_VITESSE > 0:
-        npc_pos_x = 0 - lengthNpc[0]
-
-    if npc_pos_x <= 0 - lengthNpc[0] and NPC_VITESSE < 0:
-        npc_pos_x = LARGEUR + lengthNpc[0]
-
-    # Mettre à jour la position horizontale du PNJ
-    npc_pos_x += NPC_VITESSE
-
-    # Aligner la position verticale du PNJ sur celle du personnage
-    npc_pos_y = position_y
-
-    # Limiter la position du PNJ à l'écran
-    npc_pos_y = max(0, min(npc_pos_y, HAUTEUR - lengthNpc[1] - 500))
-
-
+# Créer une instance de la classe NPC
+npc_images = [pnj1, pnj2, pnj3]
+npc = NPC(npc_images, randint(0, lengthFond[0]), lengthFond[1] - 700, NPC_VITESSE)
 # Boucle principale du jeu
 running = True
 clock = pygame.time.Clock()
@@ -177,7 +184,7 @@ while running:
     deplacer_camera()
 
     # Déplacer les pnjs
-    npc_move()
+    npc.move()
 
     fenetre.fill((0,0,0))
 
@@ -187,8 +194,8 @@ while running:
     # Afficher le personnage à sa position actuelle (par rapport à la caméra)
     fenetre.blit(personnage, (position_x - camera_x, position_y - camera_y))
 
-    # Afficher le pnj à sa position actuelle 
-    fenetre.blit(npc, (npc_pos_x, npc_pos_y))    
+    # Afficher le pnj à sa position actuelle
+    npc.draw(fenetre, camera_x, camera_y)
 
     # Mettre à jour l'affichage
     pygame.display.flip()
