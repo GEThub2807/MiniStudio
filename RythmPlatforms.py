@@ -15,7 +15,7 @@ class Jeu:
         self.player_x, self.player_y = 100, 400
         self.vitesse_x, self.vitesse_y = 0, 0
         self.image = pygame.image.load('Assets/rat.png')
-        self.player = Player(self.player_x, self.player_y, pygame.transform.scale(self.image, (50, 50)), self.vitesse_x,
+        self.player = Player(self.player_x, self.player_y,50,50, pygame.transform.scale(self.image, (50, 50)), self.vitesse_x,
                              self.vitesse_y)
         self.background = pygame.image.load("Assets/Fond_Game.jpg").convert()
         self.background = pygame.transform.scale(self.background, (1400, 800))
