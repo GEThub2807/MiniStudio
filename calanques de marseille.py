@@ -4,15 +4,14 @@ from random import randint
 import time
 
 # Constantes
-LARGEUR = 800  # Largeur de la fenêtre du jeu
-HAUTEUR = 600 # Hauteur de la fenêtre du jeu
+LARGEUR = 1920  # Largeur de la fenêtre du jeu
+HAUTEUR = 1080  # Hauteur de la fenêtre du jeu
 GRAVITE = 0.5
 VITESSE_X = 5
 VITESSE_Y = 10
 VITESSE_COURSE = 10  # Vitesse de déplacement en mode course
 PERSONNAGE_LARGEUR = 50  # Largeur du personnage
 PERSONNAGE_HAUTEUR = 50  # Hauteur du personnage
-""" NPC_VITESSE = randint(-5, -3) if randint(0, 1) else randint(3, 5) """
 NPC_VITESSE = -5
 
 # Initialisation de Pygame
@@ -24,16 +23,17 @@ fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
 # Charger les images des personnages et du fond
 try:
     fond = pygame.image.load("Assets/obese.jpg").convert()
-    lengthFond : list[int] = fond.get_size()
+    lengthFond = fond.get_size()
 
     personnage = pygame.image.load("Assets/perso.png").convert_alpha()
     personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
 
-    
     pnj1 = pygame.image.load("Assets/pnj1.png").convert_alpha()
     pnj2 = pygame.image.load("Assets/pnj2.png").convert_alpha()
     pnj3 = pygame.image.load("Assets/pnj3.png").convert_alpha()
-    
+
+    poisson = pygame.image.load("Assets/poiscaille.png").convert_alpha()
+
     # Liste de tous les pnjs
     npc = [pnj1, pnj2, pnj3]
 
@@ -63,10 +63,6 @@ camera_y = 0
 CAMERA_LARGEUR = LARGEUR // 2
 CAMERA_HAUTEUR = HAUTEUR // 2
 
-# Position initiale des pnjs
-npc_pos_x = (randint(0, lengthFond[0]))
-npc_pos_y = (lengthFond[1] - 300)
-
 # Fonction de mouvement du personnage
 def deplacer_personnage():
     global position_x, position_y, vitesse_x, vitesse_y, nombre_sauts
@@ -85,7 +81,6 @@ def deplacer_personnage():
     # Réinitialiser le nombre de sauts si le personnage est au sol
     if position_y >= lengthFond[1] - PERSONNAGE_HAUTEUR - 300:
         nombre_sauts = 0
-
 
 
 # Fonction pour déplacer la caméra
@@ -109,6 +104,7 @@ def deplacer_camera():
 
     camera_x += delta_x * 0.1
     camera_y += delta_y * 0.1
+
 
 import random
 
@@ -146,41 +142,78 @@ class NPC:
         self.pos_y = -1000
         self.velocity = 0  # Arrêter le mouvement
 
+
 # Créer une instance de la classe NPC
 npc_images = [pnj1, pnj2, pnj3]
 npc = NPC(npc_images, randint(0, lengthFond[0]), lengthFond[1] - 700, NPC_VITESSE)
 
-import random
 
 class NPCManager:
-    def __init__(self, spawn_interval):
-        self.spawn_interval = spawn_interval  # Intervalle de spawn en secondes
-        self.last_spawn_time = time.time()  # Temps du dernier spawn
+    def __init__(self, spawn_interval, fish_spawn_interval):
+        self.spawn_interval = spawn_interval  # Intervalle de spawn en secondes pour les PNJs
+        self.fish_spawn_interval = fish_spawn_interval  # Intervalle de spawn en secondes pour les poissons
+        self.last_spawn_time = time.time()  # Temps du dernier spawn de PNJ
+        self.last_fish_spawn_time = time.time()  # Temps du dernier spawn de poisson
         self.npcs = []  # Liste des PNJs
+        self.fish_list = []  # Liste des poissons
+        self.is_fish_spawned = False  # Indique si un poisson est déjà apparu
 
     def update(self):
         current_time = time.time()
-        # Vérifier si le temps écoulé depuis le dernier spawn est supérieur à l'intervalle
+        # Vérifier si le temps écoulé depuis le dernier spawn de PNJ est supérieur à l'intervalle
         if current_time - self.last_spawn_time >= self.spawn_interval:
             # Ajouter un nouveau PNJ
             npc = self.spawn_npc()  # Créer une nouvelle instance de NPC
             if npc:
                 self.npcs.append(npc)
-            # Mettre à jour le temps du dernier spawn
+            # Mettre à jour le temps du dernier spawn de PNJ
             self.last_spawn_time = current_time
+
+        # Vérifier si le temps écoulé depuis le dernier spawn de poisson est supérieur à l'intervalle
+        if current_time - self.last_fish_spawn_time >= self.fish_spawn_interval:
+            # Spawn d'un nouveau poisson
+            self.spawn_fish()
+            # Mettre à jour le temps du dernier spawn de poisson
+            self.last_fish_spawn_time = current_time
 
     def spawn_npc(self):
         # Coordonnées initiales aléatoires dans les limites de l'écran
-        initial_x = LARGEUR + lengthNpc[0] + camera_x  # Utiliser lengthNpc pour obtenir la taille du PNJ
+        initial_x = LARGEUR + lengthNpc[0] - camera_x  # Utiliser lengthNpc pour obtenir la taille du PNJ
         spawn_y = 500
         velocity = 5  # Vitesse constante pour cet exemple
         return NPC(npc_images, initial_x, spawn_y, velocity)
 
+    
+    def is_npc_near_player(self, player_x, player_y):
+        for npc in self.npcs:
+            if abs(player_x - npc.pos_x) < 200 and abs(player_y - npc.pos_y) < 200:
+                return True
+        return False
+
+    def spawn_fish(self):
+        global position_x, position_y
+
+        # Vérifier si aucun poisson n'est actuellement apparu et s'il y a des PNJs
+        if not self.is_fish_spawned and self.npcs:
+            # Vérifier si un PNJ est à proximité du joueur
+            if self.is_npc_near_player(position_x, position_y):
+                # Ajouter le poisson à la liste des poissons
+                self.fish_list.append((position_x, position_y))
+                # Indiquer qu'un poisson est apparu
+                self.is_fish_spawned = True
+
+    def update_fish(self):
+        for i, fish in enumerate(self.fish_list):
+            x, y = fish
+            # Vérifier si le poisson n'a pas atteint le sol
+            if y < lengthFond[1] - 500:  # Modifier cette valeur selon votre besoin
+                y += 5
+            self.fish_list[i] = (x, y)
 
 
-spawn_interval = 3  # Intervalle de spawn en secondes
-npc_manager = NPCManager(spawn_interval)
-
+spawn_interval = 3  # Intervalle de spawn en secondes pour les PNJs
+fish_spawn_interval = 5  # Intervalle de spawn en secondes pour les poissons
+npc_manager = NPCManager(spawn_interval, fish_spawn_interval)
 
 # Boucle principale du jeu
 running = True
@@ -239,6 +272,11 @@ while running:
     # Afficher les PNJs
     for npc in npc_manager.npcs:
         npc.draw(fenetre, camera_x, camera_y)
+
+    # Mettre à jour et afficher les poissons
+    npc_manager.update_fish()
+    for fish_pos in npc_manager.fish_list:
+        fenetre.blit(poisson, (fish_pos[0] - camera_x, fish_pos[1] - camera_y))
 
     # Mettre à jour l'affichage
     pygame.display.flip()
