@@ -12,12 +12,9 @@ PERSONNAGE_LARGEUR = 50  # Largeur du personnage
 PERSONNAGE_HAUTEUR = 50  # Hauteur du personnage
 PNJ_LARGEUR = 70  # Largeur du personnage
 PNJ_HAUTEUR = 130 # Hauteur du personnage
+PLATEFORME_LARGEUR = 200  # Largeur de la plateforme
+PLATEFORME_HAUTEUR = 20  # Hauteur de la plateforme
 
-# Constantes Platforme
-plateforme_y = 8  # Position Y de la plateforme (Modifiable)
-plateforme_hauteur = 1 # Hauteur de la plateforme (Modifiable)
-platforme_largeur = 20 # Largeur de la plateforme (Modifiable)
-rectangle = pygame.Rect(0, plateforme_y, platforme_largeur, plateforme_hauteur)
 # Points de départ et d'arrivée du PNJ
 PNJ_DEPART_X = 500
 PNJ_DEPART_Y = 400
@@ -29,6 +26,12 @@ pygame.init()
 
 # Définir la taille de la fenêtre du jeu
 fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
+
+# Position de la plateforme
+plateforme_x = 100
+plateforme_y = HAUTEUR - PLATEFORME_HAUTEUR - 50  # 50 pixels du bas de l'écran
+plateforme = pygame.Surface((PLATEFORME_LARGEUR, PLATEFORME_HAUTEUR))
+plateforme.fill((0, 255, 0))  # Remplir la plateforme de vert
 
 # Charger l'image du fond + joueur + PNJ
 try:
@@ -107,35 +110,6 @@ def collision_pnj():
                 position_y = pnj_y + PNJ_HAUTEUR
                 vitesse_y = 0  # Arrêter le mouvement vertical
 
-def collision_plateforme():
-    global position_y, vitesse_y, nombre_sauts
-
-    # Vérification de la collision entre le joueur et la plateforme
-    if position_y + PERSONNAGE_HAUTEUR < plateforme_y:
-        # Le joueur est au-dessus de la plateforme
-        pass
-    elif position_y + PERSONNAGE_HAUTEUR - vitesse_y <= plateforme_y:
-        # Le joueur traverse la plateforme par le bas
-        # Ajuster la position et réinitialiser les sauts
-        position_y = plateforme_y - PERSONNAGE_HAUTEUR
-        vitesse_y = 0
-        nombre_sauts = 0
-    else:
-        # Le joueur est en collision avec la plateforme depuis le haut
-        # Ajuster la position pour empêcher le passage à travers la plateforme
-        position_y = plateforme_y + plateforme_hauteur
-        vitesse_y = 0
-        nombre_sauts = 0
-
-def collision_rectangle():
-    global position_y, vitesse_y, nombre_sauts
-
-    if position_x + PERSONNAGE_LARGEUR > rectangle.left and position_x < rectangle.right:
-        if position_y + PERSONNAGE_HAUTEUR > rectangle.top and position_y < rectangle.bottom:
-            position_y = rectangle.top - PERSONNAGE_HAUTEUR
-            vitesse_y = 0
-            nombre_sauts = 0
-            
 # Boucle principale du jeu
 running = True
 clock = pygame.time.Clock()
@@ -179,22 +153,48 @@ while running:
     # Vérifier la collision entre le personnage et le PNJ
     collision_pnj()
 
-    # Dans la boucle principale, vérifiez la collision avec le rectangle
-    collision_rectangle()
+    # Création des rectangles pour le personnage et le PNJ
+    personnage_rect = pygame.Rect(position_x, position_y, PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR)
+    pnj_rect = pygame.Rect(pnj_x, pnj_y, PNJ_LARGEUR, PNJ_HAUTEUR)
+    # Vérification de la collision
+    if personnage_rect.colliderect(pnj_rect):
+        # Si il y a une collision, on arrête le mouvement
+        if vitesse_x > 0:  # Se déplace vers la droite
+            position_x = pnj_rect.left - PERSONNAGE_LARGEUR
+        elif vitesse_x < 0:  # Se déplace vers la gauche
+            position_x = pnj_rect.right
+        vitesse_x = 0  # Arrêter le mouvement horizontal
+
+        if vitesse_y > 0:  # Se déplace vers le bas
+            position_y = pnj_rect.top - PERSONNAGE_HAUTEUR
+        elif vitesse_y < 0:  # Se déplace vers le haut
+            position_y = pnj_rect.bottom
+        vitesse_y = 0  # Arrêter le mouvement vertical
+        
+        if position_y + PERSONNAGE_HAUTEUR <= pnj_rect.top + 10:  # Le personnage est au-dessus du rectangle
+        # Si il y a une collision, on arrête le mouvement
+            if vitesse_y > 0:  # Se déplace vers le bas
+                position_y = pnj_rect.top - PERSONNAGE_HAUTEUR
+            vitesse_y = 0  # Arrêter le mouvement vertical
+        else:
+            # Si le personnage est en dessous du rectangle, il peut le traverser
+            pass
+        # Gestion des collisions horizontales
+        if vitesse_x > 0:  # Se déplace vers la droite
+            position_x = pnj_rect.left - PERSONNAGE_LARGEUR
+        elif vitesse_x < 0:  # Se déplace vers la gauche
+            position_x = pnj_rect.right
+        vitesse_x = 0  # Arrêter le mouvement horizontal
 
     # Afficher le fond à l'arrière-plan
     fenetre.blit(fond, (0, 0))
 
     # Afficher le personnage à sa position actuelle
     fenetre.blit(personnage, (position_x, position_y))
+    fenetre.blit(plateforme, (plateforme_x, plateforme_y))
 
     # Afficher le PNJ à sa position actuelle
     fenetre.blit(pnj, (pnj_x, pnj_y))
-
-    # Afficher l'image du rectangle à la position plateforme_y
-    rectangle_image = pygame.Surface((platforme_largeur, plateforme_hauteur))
-    rectangle_image = pygame.image.load("Assets/Rectangle.png").convert_alpha()
-    fenetre.blit(rectangle_image, (0, plateforme_y))
 
     # Mettre à jour l'affichage
     pygame.display.flip()
