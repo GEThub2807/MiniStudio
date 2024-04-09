@@ -23,10 +23,10 @@ class Jeu:
         self.plateformes_image = pygame.transform.scale(self.plateformes_image, (50, 50))
 
         self.plateformes_list = [PlateformesRythm(100, 600, self.plateformes_image),
-                                 PlateformesRythm(200, 600, self.plateformes_image),
                                  PlateformesRythm(300, 600, self.plateformes_image),
-                                 PlateformesRythm(400, 600, self.plateformes_image),
-                                 PlateformesRythm(500, 600, self.plateformes_image)
+                                 PlateformesRythm(600, 600, self.plateformes_image),
+                                 PlateformesRythm(800, 600, self.plateformes_image),
+                                 PlateformesRythm(1000, 600, self.plateformes_image)
                                  ]
 
     def Afficher_Plateformes_paires(self):

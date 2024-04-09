@@ -1,9 +1,7 @@
 import pygame
 import sys
 
-from pygame.locals import *
 from player import Player
-from Collectibles import Collectibles
 
 
 class Jeu:
@@ -15,16 +13,18 @@ class Jeu:
         self.player_x, self.player_y = 100, 400
         self.vitesse_x, self.vitesse_y = 0, 0
         self.image = pygame.image.load('Assets/rat.png')
-        self.player = Player(self.player_x, self.player_y, pygame.transform.scale(self.image, (50, 50)), self.vitesse_x,
-                             self.vitesse_y)
+        self.player = Player(self.player_x, self.player_y, 50, 50, pygame.transform.scale(self.image, (50, 50)),
+                             self.vitesse_x, self.vitesse_y)
+
+        self.coins_image = pygame.image.load("Assets/coins.png").convert()
+        # Liste toutes les colliders des collectibles présent dans le niveau
+        self.coins_list = [
+            pygame.Rect(500, 750, 23, 23),
+            pygame.Rect(800, 750, 23, 23),
+            pygame.Rect(1200, 750, 23, 23)
+        ]
         self.background = pygame.image.load("Assets/Fond_Game.jpg").convert()
         self.background = pygame.transform.scale(self.background, (1400, 800))
-        self.Collectibles_image = pygame.image.load("Assets/Collectible.jpg").convert()
-        self.Collectibles_image = pygame.transform.scale(self.Collectibles_image,(50,50))
-
-        self.Collectibles_list = [Collectibles(200, 750, self.Collectibles_image),
-                                  Collectibles(500, 750, self.Collectibles_image),
-                                  Collectibles(800, 750, self.Collectibles_image)]
 
     def deplacer_personnage(self, gravity):
 
@@ -45,10 +45,15 @@ class Jeu:
 
     # Déf la boucle principale
     def Boucle_Principale(self):
+        transparent = (0, 0, 0, 0)
         GRAVITE = 0.5
         VITESSE_X = 10
         VITESSE_Y = 10
         VITESSE_COURSE = 10
+        # crée variable score
+        score = 0
+        # crée variable de collectibles requis
+        Nb_Collectibles = 99
 
         is_running = False
         clock = pygame.time.Clock()
@@ -80,11 +85,28 @@ class Jeu:
                             VITESSE_X = 5
                             is_running = False  # La touche Shift est relâchée
             self.deplacer_personnage(GRAVITE)
-            self.ecran.blit(self.background, (0, 0))
-            for collectible in self.Collectibles_list:
-                self.ecran.blit(collectible.image,(collectible.x,collectible.y))
 
+            # Créé le collider du player après chaque déplacement
+            player_collider = pygame.Rect(self.player.x, self.player.y, self.player.width, self.player.height)
+
+            # Vérifie si il y a collision avec un collectible et le joueur et actualise le score si vrai
+            for c in self.coins_list:
+                if c.colliderect(player_collider):
+                    self.coins_list.remove(c)
+                    score += 1
+
+            self.ecran.blit(self.background, (0, 0))
+
+            # Affiche les collectibles
+            for c in self.coins_list:
+                self.ecran.blit(self.coins_image, (c[0], c[1]))
+
+
+            #Actualise la position du joueur
             self.ecran.blit(self.player.image, (self.player.x, self.player.y))
+
+            # Affiche le score actuel sur l'écran
+            self.ecran.blit(font.render(str(score) + "/" + str(Nb_Collectibles), 1, (0, 0, 0)), (5, 5))
 
             clock.tick(60)
             pygame.display.flip()
@@ -93,5 +115,8 @@ class Jeu:
 # Lance l'instance de jeu
 if __name__ == '__main__':
     pygame.init()
+    # Charge la police d'écriture installé
+    font = pygame.font.Font("Assets/Parisish.ttf", 50)
+
     Jeu().Boucle_Principale()
     pygame.quit()
