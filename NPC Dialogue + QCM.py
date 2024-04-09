@@ -95,11 +95,12 @@ def NPCQCM(count, dialogList, interactKey, qcmBonneReponse):
                             displayText("Correct!", textFont, (0, 0, 0), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + spacing)
                         else:
                             displayText("Faux!", textFont, (0, 0, 0), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + spacing)
-                    pygame.display.flip()
                     
                     # Exit
                     if count == 2:
                         run = False
+                    
+                    pygame.display.flip() # Refresh
                     
                 # Selection
                 if pressed[pygame.K_UP] and selection > 1: # Up
