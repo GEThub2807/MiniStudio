@@ -1,7 +1,6 @@
 import pygame
 from pygame.locals import *
 
-
 # Initialisation de Pygame
 pygame.init()
 
@@ -12,8 +11,8 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 interactKey = pygame.K_e
 
 # This is where the text is stored
-firstTextList = ["text 1", "text 2", "text 3"]
-qcm = ["QCM time!", "reponse 1", "reponse 2", "reponse 3"]
+firstTextList = ["texte 1", "texte 2", "texte 3"]
+qcm = ["QCM:", "reponse fausse", "reponse vraie", "reponse fausse"]
 
 # Fills the screen gray
 fill = (140, 140, 140)
@@ -52,6 +51,18 @@ def NPCDialog(count, dialogList, interactKey):
                             if len(dialogList) == count + 1:
                                 run = False
 
+def Select(arrayLength, dialogList, spacing, diffSelect):
+    screen.fill(fill) # Clears the screen
+    
+    # Display the text
+    for x in range(arrayLength):
+        displayText(dialogList[x], textFont, (0, 0, 0), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + x*spacing)
+
+    # Displays selected text in a different color
+    displayText(dialogList[diffSelect], textFont, (147, 0, 191), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + (diffSelect)*spacing)
+    
+    # Refreshes the screen
+    pygame.display.flip()
 
 def NPCQCM(count, dialogList, interactKey):
     run = True
@@ -82,39 +93,17 @@ def NPCQCM(count, dialogList, interactKey):
                     if count == 1:
                         run = False
                     
-                
                 # Selection
-                
-                if pressed[pygame.K_UP] and selection > 1:
-                    screen.fill(fill) # Clears the screen
-                    
-                    # Display the text
-                    for x in range(arrayLength):
-                        displayText(dialogList[x], textFont, (0, 0, 0), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + x*spacing)
-                    
+                if pressed[pygame.K_UP] and selection > 1: # Up
+                    Select(arrayLength, dialogList, spacing, selection - 1)
                     selection = selection - 1
-                    displayText(dialogList[selection], textFont, (147, 0, 191), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + selection*spacing)
-                    
-                    pygame.display.flip()
-                    
-                if pressed[pygame.K_DOWN] and selection < 3:
-                    screen.fill(fill) # Clears the screen
-                    
-                    # Display the text
-                    for x in range(arrayLength):
-                        displayText(dialogList[x], textFont, (0, 0, 0), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + x*spacing)
-                    
+                
+                if pressed[pygame.K_DOWN] and selection < 3: # Down
+                    Select(arrayLength, dialogList, spacing, selection + 1)
                     selection = selection + 1
-                    displayText(dialogList[selection], textFont, (147, 0, 191), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + selection*spacing)
-                    
-                    pygame.display.flip()
 
-
-#NPCDialog(count, firstTextList, interactKey)
+NPCDialog(count, firstTextList, interactKey)
 NPCQCM(count, qcm, interactKey)
-
-
-
 
 # Fermeture de Pygame
 pygame.quit()
