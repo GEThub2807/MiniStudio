@@ -15,7 +15,7 @@ class Jeu:
         self.player_x, self.player_y = 100, 400
         self.vitesse_x, self.vitesse_y = 0, 0
         self.image = pygame.image.load('Assets/rat.png')
-        self.player = Player(self.player_x, self.player_y,50,50, pygame.transform.scale(self.image, (50, 50)), self.vitesse_x,
+        self.player = Player(self.player_x, self.player_y, pygame.transform.scale(self.image, (50, 50)), self.vitesse_x,
                              self.vitesse_y)
         self.background = pygame.image.load("Assets/Fond_Game.jpg").convert()
         self.background = pygame.transform.scale(self.background, (1400, 800))
@@ -23,10 +23,10 @@ class Jeu:
         self.plateformes_image = pygame.transform.scale(self.plateformes_image, (50, 50))
 
         self.plateformes_list = [PlateformesRythm(100, 600, self.plateformes_image),
-                                 PlateformesRythm(200, 600, self.plateformes_image),
                                  PlateformesRythm(300, 600, self.plateformes_image),
-                                 PlateformesRythm(400, 600, self.plateformes_image),
-                                 PlateformesRythm(500, 600, self.plateformes_image)
+                                 PlateformesRythm(600, 600, self.plateformes_image),
+                                 PlateformesRythm(800, 600, self.plateformes_image),
+                                 PlateformesRythm(1000, 600, self.plateformes_image)
                                  ]
 
     def Afficher_Plateformes_paires(self):
@@ -114,7 +114,6 @@ class Jeu:
             self.ecran.blit(self.background, (0, 0))
 
             self.ecran.blit(self.player.image, (self.player.x, self.player.y))
-
 
             if Loop % 2 == 0:
                 self.Afficher_Plateformes_paires()

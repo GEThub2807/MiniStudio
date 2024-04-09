@@ -17,7 +17,7 @@ class Jeu:
                              self.vitesse_x, self.vitesse_y)
 
         self.coins_image = pygame.image.load("Assets/coins.png").convert()
-        #Liste toutes les colliders des collectibles présent dans le niveau
+        # Liste toutes les colliders des collectibles présent dans le niveau
         self.coins_list = [
             pygame.Rect(500, 750, 23, 23),
             pygame.Rect(800, 750, 23, 23),
@@ -50,9 +50,9 @@ class Jeu:
         VITESSE_X = 10
         VITESSE_Y = 10
         VITESSE_COURSE = 10
-        #crée variable score
+        # crée variable score
         score = 0
-        #crée variable de collectibles requis
+        # crée variable de collectibles requis
         Nb_Collectibles = 99
 
         is_running = False
@@ -86,12 +86,10 @@ class Jeu:
                             is_running = False  # La touche Shift est relâchée
             self.deplacer_personnage(GRAVITE)
 
-
-
-            #Créé le collider du player après chaque déplacement
+            # Créé le collider du player après chaque déplacement
             player_collider = pygame.Rect(self.player.x, self.player.y, self.player.width, self.player.height)
 
-            #Vérifie si il y a collision avec un collectible et le joueur et actualise le score si vrai
+            # Vérifie si il y a collision avec un collectible et le joueur et actualise le score si vrai
             for c in self.coins_list:
                 if c.colliderect(player_collider):
                     self.coins_list.remove(c)
@@ -99,17 +97,16 @@ class Jeu:
 
             self.ecran.blit(self.background, (0, 0))
 
-
-
             # Affiche les collectibles
             for c in self.coins_list:
                 self.ecran.blit(self.coins_image, (c[0], c[1]))
 
+
+            #Actualise la position du joueur
             self.ecran.blit(self.player.image, (self.player.x, self.player.y))
 
-
-            #Affiche le score actuel sur l'écran
-            self.ecran.blit(font.render(str(score)+"/"+str(Nb_Collectibles), 1, (0, 0, 0)), (5,5))
+            # Affiche le score actuel sur l'écran
+            self.ecran.blit(font.render(str(score) + "/" + str(Nb_Collectibles), 1, (0, 0, 0)), (5, 5))
 
             clock.tick(60)
             pygame.display.flip()
@@ -118,7 +115,7 @@ class Jeu:
 # Lance l'instance de jeu
 if __name__ == '__main__':
     pygame.init()
-    #Charge la police d'écriture installé
+    # Charge la police d'écriture installé
     font = pygame.font.Font("Assets/Parisish.ttf", 50)
 
     Jeu().Boucle_Principale()
