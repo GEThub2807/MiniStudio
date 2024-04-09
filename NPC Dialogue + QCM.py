@@ -12,7 +12,8 @@ interactKey = pygame.K_e
 
 # This is where the text is stored
 firstTextList = ["texte 1", "texte 2", "texte 3"]
-qcm = ["QCM:", "reponse fausse", "reponse vraie", "reponse fausse"]
+qcm = ["QCM:", "reponse fausse", "reponse vraie", "reponse fausse", "reponse fausse"]
+qcmBonneReponse = 2
 
 # Fills the screen gray
 fill = (140, 140, 140)
@@ -64,7 +65,7 @@ def Select(arrayLength, dialogList, spacing, diffSelect):
     # Refreshes the screen
     pygame.display.flip()
 
-def NPCQCM(count, dialogList, interactKey):
+def NPCQCM(count, dialogList, interactKey, qcmBonneReponse):
     run = True
     spacing = 50
     selection = 1
@@ -87,23 +88,33 @@ def NPCQCM(count, dialogList, interactKey):
                         displayText(dialogList[x], textFont, (0, 0, 0), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + x*spacing)
                     # Initial selected
                     displayText(dialogList[1], textFont, (147, 0, 191), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + spacing)
-                    pygame.display.flip()
+                    
+                    if count == 1:
+                        screen.fill(fill) # Clears the screen
+                        if selection == qcmBonneReponse:
+                            displayText("Correct!", textFont, (0, 0, 0), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + spacing)
+                        else:
+                            displayText("Faux!", textFont, (0, 0, 0), SCREEN_WIDTH/4, SCREEN_HEIGHT/4 + spacing)
                     
                     # Exit
-                    if count == 1:
+                    if count == 2:
                         run = False
+                    
+                    pygame.display.flip() # Refresh
                     
                 # Selection
                 if pressed[pygame.K_UP] and selection > 1: # Up
                     Select(arrayLength, dialogList, spacing, selection - 1)
                     selection = selection - 1
                 
-                if pressed[pygame.K_DOWN] and selection < 3: # Down
+                if pressed[pygame.K_DOWN] and selection < (len(qcm)-1): # Down
                     Select(arrayLength, dialogList, spacing, selection + 1)
                     selection = selection + 1
 
-NPCDialog(count, firstTextList, interactKey)
-NPCQCM(count, qcm, interactKey)
+
+#NPCDialog(count, firstTextList, interactKey)
+NPCQCM(count, qcm, interactKey, qcmBonneReponse)
+
 
 # Fermeture de Pygame
 pygame.quit()
