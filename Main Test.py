@@ -29,7 +29,7 @@ fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
 
 # Position de la plateforme
 plateforme_x = 100
-plateforme_y = HAUTEUR - PLATEFORME_HAUTEUR - 50  # 50 pixels du bas de l'écran
+plateforme_y = HAUTEUR - PLATEFORME_HAUTEUR - 105  # 50 pixels du bas de l'écran
 plateforme = pygame.Surface((PLATEFORME_LARGEUR, PLATEFORME_HAUTEUR))
 plateforme.fill((0, 255, 0))  # Remplir la plateforme de vert
 
@@ -50,6 +50,7 @@ except pygame.error as e:
 # Position initiale du personnage
 position_x = 100
 position_y = 400
+onGround = False
 
 # Position initiale du PNJ
 pnj_x = PNJ_DEPART_X
@@ -68,8 +69,9 @@ direction_pnj = 1  # 1 pour droite, -1 pour gauche
 def deplacer_personnage():
     global position_x, position_y, vitesse_x, vitesse_y, nombre_sauts, onGround
 
-    # Appliquer la gravité au personnage
-    vitesse_y += GRAVITE
+    # Appliquer la gravité seulement si le personnage n'est pas sur le sol
+    if not onGround:
+        vitesse_y += GRAVITE
 
     # Mettre à jour la position du personnage
     position_x += vitesse_x
@@ -85,21 +87,19 @@ def deplacer_personnage():
         onGround = True
 
 # Fonction de collision entre le personnage et le PNJ
+# Modifier la fonction de collision
+# Modifier la fonction de collision avec la plateforme
 def collision_pnj():
-    global position_x, position_y, vitesse_x, vitesse_y
-    
-    # Vérifier la collision uniquement si le personnage se déplace vers le PNJ
-    if vitesse_x > 0:
-        if position_x + PERSONNAGE_LARGEUR > pnj_x and position_x < pnj_x + PNJ_LARGEUR:
-            if position_y + PERSONNAGE_HAUTEUR > pnj_y and position_y < pnj_y + PNJ_HAUTEUR:
-                position_x = pnj_x - PERSONNAGE_LARGEUR
-                vitesse_x = 0  # Arrêter le mouvement horizontal
-    elif vitesse_x < 0:
-        if position_x < pnj_x + PNJ_LARGEUR and position_x + PERSONNAGE_LARGEUR > pnj_x:
-            if position_y + PERSONNAGE_HAUTEUR > pnj_y and position_y < pnj_y + PNJ_HAUTEUR:
-                position_x = pnj_x + PNJ_LARGEUR
-                vitesse_x = 0  # Arrêter le mouvement horizontal
-            
+    global position_x, position_y, vitesse_x, vitesse_y, onGround
+
+    # Vérifier la collision avec la plateforme
+    if PlateformCollision(pygame.Rect(plateforme_x,plateforme_y,PLATEFORME_LARGEUR,PLATEFORME_HAUTEUR), pygame.Rect(position_x,position_y,PERSONNAGE_LARGEUR,PERSONNAGE_HAUTEUR)): 
+        position_y = plateforme_y - PERSONNAGE_HAUTEUR
+        onGround = True
+        vitesse_y = 0  # Arrêter le mouvement vertical
+    else:
+        onGround = False  # Si le personnage n'est plus sur la plateforme, réinitialiser onGround
+
     # Même chose pour le mouvement vertical
     if vitesse_y > 0:
         if position_x + PERSONNAGE_LARGEUR > pnj_x and position_x < pnj_x + PNJ_LARGEUR:
@@ -117,9 +117,7 @@ def PlateformCollision(PlatRect, PlayerRect):
             PlatRect.left <= PlayerRect.left + PlayerRect.width and
             PlatRect.top + PlatRect.height >= PlayerRect.bottom - 10  and 
             PlatRect.top <= PlayerRect.top + PlayerRect.height): #Collision avec le sol  
-
             return True
-        
         return False
 
 # Boucle principale du jeu
@@ -137,6 +135,7 @@ while running:
             elif event.key == K_SPACE and nombre_sauts < 2:
                 vitesse_y = -VITESSE_Y
                 nombre_sauts += 1
+                onGround = False
             elif event.key == K_LSHIFT or event.key == K_RSHIFT:
                 if not is_running:
                     VITESSE_X = VITESSE_COURSE
@@ -152,7 +151,10 @@ while running:
                 if is_running:
                     VITESSE_X = 5
                     is_running = False
-
+            elif event.key == K_SPACE and onGround:  # Réinitialiser le saut si le personnage est déjà sur le sol
+                nombre_sauts = 0
+            elif event.key == K_DOWN and PlateformCollision(pygame.Rect(plateforme_x,plateforme_y,PLATEFORME_LARGEUR,PLATEFORME_HAUTEUR), pygame.Rect(position_x,position_y,PERSONNAGE_LARGEUR,PERSONNAGE_HAUTEUR)): 
+                position_y = plateforme_y + PLATEFORME_HAUTEUR  # Descendre du collider
     # Déplacer le personnage
     deplacer_personnage()
 
