@@ -49,13 +49,13 @@ class Jeu:
             fond = pygame.image.load("Assets/obese.jpg").convert()
             Length_Fond : list[int] = fond.get_size()
 
-            personnage = pygame.image.load("Assets/perso.png").convert_alpha()
+            personnage = pygame.image.load("Asset/Ampoule idle/Ampoule_idle0001.png").convert_alpha()
             personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
 
             
-            pnj1 = pygame.image.load("Assets/pnj1.png").convert_alpha()
-            pnj2 = pygame.image.load("Assets/pnj2.png").convert_alpha()
-            pnj3 = pygame.image.load("Assets/pnj3.png").convert_alpha()
+            pnj1 = pygame.image.load("Asset/PNJ bonne mère idle/PNJ bonne mère - idle0001.png").convert_alpha()
+            pnj2 = pygame.image.load("Asset/PNJ mouette idle/PNJ mouette - idle0001.png").convert_alpha()
+            pnj3 = pygame.image.load("Asset/PNJ sardine idle/PNJ sardine - idle0001.png").convert_alpha()
             
             # Liste de tous les pnjs
             npc = [pnj1, pnj2, pnj3]
@@ -68,31 +68,6 @@ class Jeu:
             pygame.quit()
             exit()
         #--------------------------------------------------Chargement des images des personnages et du fond fin------------------------------------------
-            
-        # Charger les images des personnages et du fond
-        try:
-            fond = pygame.image.load("Assets/obese.jpg").convert()
-            Length_Fond = fond.get_size()
-
-            personnage = pygame.image.load("Assets/perso.png").convert_alpha()
-            personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
-
-            pnj1 = pygame.image.load("Assets/pnj1.png").convert_alpha()
-            pnj2 = pygame.image.load("Assets/pnj2.png").convert_alpha()
-            pnj3 = pygame.image.load("Assets/pnj3.png").convert_alpha()
-
-            poisson = pygame.image.load("Assets/poiscaille.png").convert_alpha()
-
-            # Liste de tous les pnjs
-            npc = [pnj1, pnj2, pnj3]
-
-            Pnj_Choice = randint(0, len(npc) - 1)
-            Length_Npc = npc[Pnj_Choice].get_size()
-
-        except pygame.error as e:
-            print("Erreur lors du chargement des images :", str(e))
-            pygame.quit()
-            exit()
 
         #----------------------------------------------------Initialisation variables persos et cam, début, Valentin-------------------------------------
         # Position initiale du personnage
@@ -276,7 +251,7 @@ class Jeu:
         plateformes_instance = Plateformes()
 
 
-        #-----------------------------------------------------------Systèmes des plateformes, Début, Timothé---------------------------------------------
+        #-----------------------------------------------------------Systèmes des plateformes, Fin, Timothé---------------------------------------------
         #-----------------------------------------------------------Initialisation des animations, début, Elouan------------------------------------
         Anim_List = [] #crée le tableau avec les sprites pour l'anim
         Anim_Steps = [4, 6, 3 , 4] #définit le nombre de sprites qui seront affichées
