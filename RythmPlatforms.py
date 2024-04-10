@@ -29,6 +29,7 @@ class Jeu:
                                  PlateformesRythm(1000, 600, self.plateformes_image)
                                  ]
 
+    #Déplace les plateformes paires de la liste à l'écran et déplace hors de l'écran ceux qui sont impaires
     def Afficher_Plateformes_paires(self):
         for i in range(0, len(self.plateformes_list)):
             if i % 2 == 0:
@@ -38,6 +39,8 @@ class Jeu:
                 self.ecran.blit(self.plateformes_list[i].image,
                                 (self.plateformes_list[i].x, self.plateformes_list[i].y + 1000))
 
+
+    #Déplace les plateformes impaires de la liste à l'écran et déplace hors de l'écran ceux qui sont paires
     def Afficher_Plateformes_Impaires(self):
         for j in range(0, len(self.plateformes_list)):
             if j % 2 == 0:
