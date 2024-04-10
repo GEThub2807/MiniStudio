@@ -5,10 +5,7 @@ import level1
 import level2
 pygame.init()
 
-pygame.mixer.init()
-pygame.mixer.music.load("Assets/main_theme.mp3")
-click_sound = pygame.mixer.Sound("Assets/Kudasai.mp3")
-pygame.mixer.music.play()
+
 
 screen_info = pygame.display.Info()
 SCREEN_HEIGHT = screen_info.current_h
@@ -19,7 +16,7 @@ SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE
 pygame.display.set_caption("Menu")
 
 try:
-    fond = pygame.image.load("Assets/background.jpg").convert()
+    fond = pygame.image.load("Assets/menu.png").convert()
 except pygame.error as e:
     print("Erreur lors du chargement des images :", str(e))
     pygame.quit()
@@ -69,16 +66,12 @@ def main_menu():
 
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
-                click_sound
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                     playing_menu()
-                    click_sound.play()
                 if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                     options()
-                    click_sound.play()
                 if CREDIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     credit()
-                    click_sound.play()
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     pygame.quit()
                     pygame.exit()
@@ -124,7 +117,6 @@ def credit():
                 pygame.quit()
                 quit()  
             if event.type == pygame.MOUSEBUTTONDOWN:
-                click_sound.play()
                 main_menu()
 
         pygame.display.update()
@@ -137,7 +129,6 @@ def options():
     volume_slider_y = SCREEN_HEIGHT // 1.5
     volume_min = 0
     volume_max = 100
-    volume = pygame.mixer.music.get_volume() * volume_max
     while True:
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
 
@@ -194,16 +185,13 @@ def options():
 
                 if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
                     main_menu()
-                    click_sound.play()
                 if FULLSCREEN == True and OPTIONS_SCREEN_SIZE.checkForInput(OPTIONS_MOUSE_POS):
                     new_width = 1280
                     new_height = 720
                     FULLSCREEN = False
                     pygame.display.set_mode((new_width, new_height), pygame.RESIZABLE)
                     SCREEN_WIDTH, SCREEN_HEIGHT = new_width, new_height
-                    click_sound.play()
                 elif FULLSCREEN == False and OPTIONS_SCREEN_FULL.checkForInput(OPTIONS_MOUSE_POS):
-                    click_sound.play()
                     new_width = screen_info.current_w
                     new_height = screen_info.current_h
                     FULLSCREEN = True
@@ -240,13 +228,12 @@ def playing_menu():
 
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
-                click_sound.play()
                 if RETOUR_BUTTON.checkForInput(MENU_MOUSE_POS):
                     main_menu()
                 if LVL1_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    level1.run_game()
+                    level1.Jeu.run_game()
                 if LVL2_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    level2.run_game()
+                    level2.Jeu()
         
         pygame.display.update()
 
