@@ -28,8 +28,8 @@ pygame.init()
 fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
 
 # Position de la plateforme
-plateforme_x = 35 # x pixels du bord gauche de l'écran
-plateforme_y = HAUTEUR - PLATEFORME_HAUTEUR - 75  # x pixels du bas de l'écran
+x = 35 # x pixels du bord gauche de l'écran
+y = HAUTEUR - PLATEFORME_HAUTEUR - 75  # x pixels du bas de l'écran
 
 class PlateformeBalcon(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -47,7 +47,7 @@ plateforme_positions = [(35, HAUTEUR - PLATEFORME_HAUTEUR - 75),
                         # Ajoutez autant de positions de plateformes que vous le souhaitez
                         ]
 
-for x, y in plateforme_positions:
+def ajouter_plateforme(x, y):
     plateforme = PlateformeBalcon(x, y)
     plateformes.append(plateforme)
 
@@ -191,8 +191,6 @@ while running:
     # Création des rectangles pour le personnage et le PNJ
     personnage_rect = pygame.Rect(position_x, position_y, PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR)
     pnj_rect = pygame.Rect(pnj_x, pnj_y, PNJ_LARGEUR, PNJ_HAUTEUR)
-
-    
 
     # Afficher le fond à l'arrière-plan
     fenetre.blit(fond, (0, 0))
