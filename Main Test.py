@@ -2,14 +2,14 @@ import pygame
 from pygame.locals import *
 
 # Constantes
-LARGEUR = 1000  # Largeur de la fenêtre du jeu
-HAUTEUR = 500  # Hauteur de la fenêtre du jeu
+LARGEUR = 1920  # Largeur de la fenêtre du jeu
+HAUTEUR = 1080  # Hauteur de la fenêtre du jeu
 GRAVITE = 0.5
 VITESSE_X = 5
 VITESSE_Y = 10
 VITESSE_COURSE = 10  # Vitesse de déplacement en mode course
-PERSONNAGE_LARGEUR = 50  # Largeur du personnage
-PERSONNAGE_HAUTEUR = 50  # Hauteur du personnage
+PERSONNAGE_LARGEUR = 100  # Largeur du personnage
+PERSONNAGE_HAUTEUR = 70  # Hauteur du personnage
 PNJ_LARGEUR = 70  # Largeur du personnage
 PNJ_HAUTEUR = 130 # Hauteur du personnage
 PLATEFORME_LARGEUR = 200  # Largeur de la plateforme
@@ -28,17 +28,17 @@ pygame.init()
 fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
 
 # Position de la plateforme
-plateforme_x = 100
-plateforme_y = HAUTEUR - PLATEFORME_HAUTEUR - 105  # 50 pixels du bas de l'écran
+plateforme_x = 50
+plateforme_y = HAUTEUR - PLATEFORME_HAUTEUR - 60  # 50 pixels du bas de l'écran
 plateforme = pygame.Surface((PLATEFORME_LARGEUR, PLATEFORME_HAUTEUR))
 plateforme.fill((0, 255, 0))  # Remplir la plateforme de vert
 
 
 # Charger l'image du fond + joueur + PNJ
 try:
-    fond = pygame.image.load("Assets/Fond.jpg").convert()
+    fond = pygame.image.load("Assets/BG5.png").convert_alpha()
     fond = pygame.transform.scale(fond, (LARGEUR, HAUTEUR))
-    personnage = pygame.image.load("Assets/Cube.png").convert_alpha()
+    personnage = pygame.image.load("Assets/JeanMichelTeste.png").convert_alpha()
     personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
     pnj = pygame.image.load("Assets/PNJ.png").convert_alpha()
     pnj = pygame.transform.scale(pnj, (PNJ_LARGEUR, PNJ_HAUTEUR))
