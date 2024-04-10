@@ -1,11 +1,9 @@
 import pygame
 from pygame.locals import *
 from tools import EventHandle
-import level1
+from level1 import *
 import level2
 pygame.init()
-
-
 
 screen_info = pygame.display.Info()
 SCREEN_HEIGHT = screen_info.current_h
@@ -31,11 +29,11 @@ def main_menu():
     a = 50
     b = 50
     c = 50
-    adjustpose = 3.4
-    play_button_pos = (SCREEN_WIDTH/adjustpose, SCREEN_HEIGHT * 0.25 -40)
-    options_button_pos = (SCREEN_WIDTH/adjustpose, SCREEN_HEIGHT * 0.4 -40)
-    credit_button_pos = (SCREEN_WIDTH/adjustpose, SCREEN_HEIGHT * 0.55 -40)
-    quit_button_pos = (SCREEN_WIDTH/adjustpose, SCREEN_HEIGHT * 0.7 -40)
+    Adjust_Pose = 3.4
+    play_button_pos = (SCREEN_WIDTH/Adjust_Pose, SCREEN_HEIGHT * 0.25 -40)
+    options_button_pos = (SCREEN_WIDTH/Adjust_Pose, SCREEN_HEIGHT * 0.4 -40)
+    credit_button_pos = (SCREEN_WIDTH/Adjust_Pose, SCREEN_HEIGHT * 0.55 -40)
+    quit_button_pos = (SCREEN_WIDTH/Adjust_Pose, SCREEN_HEIGHT * 0.7 -40)
 
     
     while running:
@@ -47,9 +45,9 @@ def main_menu():
                 running = False
 
         SCREEN.blit(fond, (0, 0))
-        adjustpose = 1.4
+        Adjust_Pose = 1.4
         MENU_TEXT = get_font(100).render("French Odyssey", True, (a, b, c)) 
-        MENU_RECT = MENU_TEXT.get_rect(center=(SCREEN_WIDTH // adjustpose, SCREEN_HEIGHT * 0.25 -40))
+        MENU_RECT = MENU_TEXT.get_rect(center=(SCREEN_WIDTH // Adjust_Pose, SCREEN_HEIGHT * 0.25 -40))
         SCREEN.blit(MENU_TEXT, MENU_RECT)
 
         PLAY_BUTTON = EventHandle(image=pygame.image.load("Assets/Play Rect.png"), pos=play_button_pos, 
@@ -136,10 +134,10 @@ def options():
 
         pygame.draw.rect(SCREEN, "gray", (volume_slider_x, volume_slider_y, volume_slider_width, volume_slider_height))
         pygame.draw.rect(SCREEN, "green", (volume_slider_x, volume_slider_y, (volume / volume_max) * volume_slider_width, volume_slider_height))
-        adjustpose = 0.64
+        Adjust_Pose = 0.64
         OPTIONS_TEXT = get_font(45).render("This is the OPTIONS screen.", True, "Black")
         VOLUME = get_font(75).render("VOLUME", True, "Black")  # Texte pour le volume
-        RECT_VOLUME = VOLUME.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT * adjustpose))  # Rectangle pour centrer le texte
+        RECT_VOLUME = VOLUME.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT * Adjust_Pose))  # Rectangle pour centrer le texte
         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT * 0.24))
         SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
         SCREEN.blit(VOLUME, RECT_VOLUME)  # Afficher le texte "VOLUME"
@@ -231,7 +229,7 @@ def playing_menu():
                 if RETOUR_BUTTON.checkForInput(MENU_MOUSE_POS):
                     main_menu()
                 if LVL1_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    level1.Jeu.run_game()
+                    Jeu.run_game()
                 if LVL2_BUTTON.checkForInput(MENU_MOUSE_POS):
                     level2.Jeu()
         

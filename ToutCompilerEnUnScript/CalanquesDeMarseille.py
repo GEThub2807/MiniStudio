@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 from random import randint
+import time
 
 # Constantes
 LARGEUR = 1920  # Largeur de la fenêtre du jeu
