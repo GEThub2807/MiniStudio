@@ -30,7 +30,7 @@ run = True
 while run:
 
     # update bg
-    screen.fill(BG)
+    fenetre.fill(BG)
     
     #update anim
     currentTime = pygame.time.get_ticks()
@@ -41,7 +41,7 @@ while run:
             frame = 0
 
     # print les img
-    screen.blit(animList[action][frame], (0, 0))
+    fenetre.blit(animList[action][frame], (0, 0))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
