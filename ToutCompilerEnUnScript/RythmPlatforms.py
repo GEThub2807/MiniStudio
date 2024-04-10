@@ -15,19 +15,18 @@ class Jeu:
         self.player_x, self.player_y = 100, 400
         self.vitesse_x, self.vitesse_y = 0, 0
         self.image = pygame.image.load('Assets/rat.png')
-        self.player = Player(self.player_x, self.player_y, pygame.transform.scale(self.image, (50, 50)), self.vitesse_x,
-                             self.vitesse_y)
+        self.player = Player(self.player_x, self.player_y, pygame.transform.scale(self.image, (50, 50)), self.vitesse_x, self.vitesse_y)
         self.background = pygame.image.load("Assets/Fond_Game.jpg").convert()
         self.background = pygame.transform.scale(self.background, (1400, 800))
         self.plateformes_image = pygame.image.load("Assets/Plateformes.png").convert()
         self.plateformes_image = pygame.transform.scale(self.plateformes_image, (50, 50))
 
         self.plateformes_list = [PlateformesRythm(100, 600, self.plateformes_image),
-                                 PlateformesRythm(300, 600, self.plateformes_image),
-                                 PlateformesRythm(600, 600, self.plateformes_image),
-                                 PlateformesRythm(800, 600, self.plateformes_image),
-                                 PlateformesRythm(1000, 600, self.plateformes_image)
-                                 ]
+                                PlateformesRythm(300, 600, self.plateformes_image),
+                                PlateformesRythm(600, 600, self.plateformes_image),
+                                PlateformesRythm(800, 600, self.plateformes_image),
+                                PlateformesRythm(1000, 600, self.plateformes_image)
+                                ]
 
     def Afficher_Plateformes_paires(self):
         for i in range(0, len(self.plateformes_list)):
@@ -47,29 +46,8 @@ class Jeu:
                 self.ecran.blit(self.plateformes_list[j].image,
                                 (self.plateformes_list[j].x, self.plateformes_list[j].y))
 
-    def deplacer_personnage(self, gravity):
-
-        # Appliquer la gravité au personnage
-        self.player.vitesse_y += gravity
-
-        # Mettre à jour la position du personnage
-        self.player.y += self.player.vitesse_y
-        self.player.x += self.player.vitesse_x
-
-        # Limiter la position du personnage à l'écran
-        self.player.x = max(0, min(self.player.x, 1400 - 50))
-        self.player.y = max(0, min(self.player.y, 800 - 50))
-
-        # Réinitialiser le nombre de sauts si le personnage touche le sol
-        if self.player.y >= 800 - 50:
-            self.Nb_Sauts = 0
-
     # Déf la boucle principale
     def Boucle_Principale(self):
-        GRAVITE = 0.5
-        VITESSE_X = 10
-        VITESSE_Y = 10
-        VITESSE_COURSE = 10
         Timer = 0
         Loop = 1
         pygame.time.set_timer(USEREVENT, 1000)
@@ -115,8 +93,10 @@ class Jeu:
 
             self.ecran.blit(self.player.image, (self.player.x, self.player.y))
 
-            self.Afficher_Plateformes_Impaires()
-            self.Afficher_Plateformes_paires()
+            if Loop % 2 == 0:
+                self.Afficher_Plateformes_paires()
+            else:
+                self.Afficher_Plateformes_Impaires()
 
             pygame.display.flip()
 
