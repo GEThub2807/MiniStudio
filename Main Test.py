@@ -12,14 +12,14 @@ PERSONNAGE_LARGEUR = 100  # Largeur du personnage
 PERSONNAGE_HAUTEUR = 70  # Hauteur du personnage
 PNJ_LARGEUR = 70  # Largeur du personnage
 PNJ_HAUTEUR = 130 # Hauteur du personnage
-PLATEFORME_LARGEUR = 200  # Largeur de la plateforme
+PLATEFORME_LARGEUR = 145  # Largeur de la plateforme
 PLATEFORME_HAUTEUR = 20  # Hauteur de la plateforme
 
 # Points de départ et d'arrivée du PNJ
 PNJ_DEPART_X = 500
-PNJ_DEPART_Y = 400
+PNJ_DEPART_Y = HAUTEUR - PNJ_HAUTEUR
 PNJ_ARRIVEE_X = 600
-PNJ_ARRIVEE_Y = 400
+PNJ_ARRIVEE_Y = HAUTEUR - PNJ_HAUTEUR
 
 # Initialisation de Pygame
 pygame.init()
@@ -28,11 +28,28 @@ pygame.init()
 fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
 
 # Position de la plateforme
-plateforme_x = 50
-plateforme_y = HAUTEUR - PLATEFORME_HAUTEUR - 60  # 50 pixels du bas de l'écran
-plateforme = pygame.Surface((PLATEFORME_LARGEUR, PLATEFORME_HAUTEUR))
-plateforme.fill((0, 255, 0))  # Remplir la plateforme de vert
+plateforme_x = 35 # x pixels du bord gauche de l'écran
+plateforme_y = HAUTEUR - PLATEFORME_HAUTEUR - 75  # x pixels du bas de l'écran
 
+class PlateformeBalcon(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((PLATEFORME_LARGEUR, PLATEFORME_HAUTEUR), pygame.SRCALPHA)
+        self.image.fill((255, 0, 0))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+plateformes = []
+
+plateforme_positions = [(35, HAUTEUR - PLATEFORME_HAUTEUR - 75),
+                        (465, HAUTEUR - PLATEFORME_HAUTEUR - 75),
+                        # Ajoutez autant de positions de plateformes que vous le souhaitez
+                        ]
+
+for x, y in plateforme_positions:
+    plateforme = PlateformeBalcon(x, y)
+    plateformes.append(plateforme)
 
 # Charger l'image du fond + joueur + PNJ
 try:
@@ -93,8 +110,8 @@ def collision_pnj():
     global position_x, position_y, vitesse_x, vitesse_y, onGround
 
     # Vérifier la collision avec la plateforme
-    if PlateformCollision(pygame.Rect(plateforme_x,plateforme_y,PLATEFORME_LARGEUR,PLATEFORME_HAUTEUR), pygame.Rect(position_x,position_y,PERSONNAGE_LARGEUR,PERSONNAGE_HAUTEUR)): 
-        position_y = plateforme_y - PERSONNAGE_HAUTEUR
+    if PlateformCollision(pygame.Rect(x,y,PLATEFORME_LARGEUR,PLATEFORME_HAUTEUR), pygame.Rect(position_x,position_y,PERSONNAGE_LARGEUR,PERSONNAGE_HAUTEUR)): 
+        position_y = y - PERSONNAGE_HAUTEUR
         onGround = True
         vitesse_y = 0  # Arrêter le mouvement vertical
     else:
@@ -153,13 +170,13 @@ while running:
                     is_running = False
             elif event.key == K_SPACE and onGround:  # Réinitialiser le saut si le personnage est déjà sur le sol
                 nombre_sauts = 0
-            elif event.key == K_DOWN and PlateformCollision(pygame.Rect(plateforme_x,plateforme_y,PLATEFORME_LARGEUR,PLATEFORME_HAUTEUR), pygame.Rect(position_x,position_y,PERSONNAGE_LARGEUR,PERSONNAGE_HAUTEUR)): 
-                position_y = plateforme_y + PLATEFORME_HAUTEUR  # Descendre du collider
+            elif event.key == K_DOWN and PlateformCollision(pygame.Rect(x,y,PLATEFORME_LARGEUR,PLATEFORME_HAUTEUR), pygame.Rect(position_x,position_y,PERSONNAGE_LARGEUR,PERSONNAGE_HAUTEUR)): 
+                position_y = y + PLATEFORME_HAUTEUR  # Descendre du collider
     # Déplacer le personnage
     deplacer_personnage()
 
-    if PlateformCollision(pygame.Rect(plateforme_x,plateforme_y,PLATEFORME_LARGEUR,PLATEFORME_HAUTEUR), pygame.Rect(position_x,position_y,PERSONNAGE_LARGEUR,PERSONNAGE_HAUTEUR)): 
-        position_y = plateforme_y - PERSONNAGE_HAUTEUR
+    if PlateformCollision(pygame.Rect(x,y,PLATEFORME_LARGEUR,PLATEFORME_HAUTEUR), pygame.Rect(position_x,position_y,PERSONNAGE_LARGEUR,PERSONNAGE_HAUTEUR)): 
+        position_y = y - PERSONNAGE_HAUTEUR
         onGround = True
 
     # Déplacer le PNJ avec gestion de collision
@@ -182,7 +199,8 @@ while running:
 
     # Afficher le personnage à sa position actuelle
     fenetre.blit(personnage, (position_x, position_y))
-    fenetre.blit(plateforme, (plateforme_x, plateforme_y))
+    for plateforme in plateformes:
+        fenetre.blit(plateforme.image, plateforme.rect)
 
     # Afficher le PNJ à sa position actuelle
     fenetre.blit(pnj, (pnj_x, pnj_y))
