@@ -1,162 +1,57 @@
 import pygame
-from pygame.locals import *
-from random import randint
-import random
+import spritesheet
 
-def run_game():
-    # Constantes
-    LARGEUR = 1920 # Largeur de la fenêtre du jeu
-    HAUTEUR = 1080  # Hauteur de la fenêtre du jeu
-    GRAVITE = 0.5
-    VITESSE_X = 5
-    VITESSE_Y = 10
-    VITESSE_COURSE = 10  # Vitesse de déplacement en mode course
-    PERSONNAGE_LARGEUR = 50  # Largeur du personnage
-    PERSONNAGE_HAUTEUR = 50  # Hauteur du personnage
-    """ NPC_VITESSE = randint(-5, -3) if randint(0, 1) else randint(3, 5) """
-    NPC_VITESSE= randint(-5, -3) if randint(0, 1) else randint(3, 5)
+pygame.init()
 
-    # Initialisation de Pygame
-    pygame.init()
+SCREEN_WIDTH = 500
+SCREEN_HEIGHT = 500
 
-    # Définir la taille de la fenêtre du jeu
-    fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption('Spritesheets')
+
+sprite_sheet_image = pygame.image.load("Assets/anim.png").convert_alpha()
+sprite_sheet = spritesheet.SpriteSheet(sprite_sheet_image)
+
+BG = (50, 50, 50)
+BLACK = (0, 0, 0)
+
+animList = [] #crée le tableau avec les sprites pour l'anim
+animSteps = [4, 6, 3 , 4] #définit le nombre de sprites qui seront affichées
+action = 0
+lastUpdate = pygame.time.get_ticks()
+animCD = 500 #définit le temps de la boucle d'animation
+frame = 0
+stepCount = 0
+
+for animation in animSteps:
+    tempImgList = []
+    for _ in range(animation):
+        tempImgList.append(sprite_sheet.get_image(stepCount, 24, 24, 3, BLACK))
+        stepCount += 1
+    animList.append(tempImgList)
+
+run = True
+while run:
+
+    # update bg
+    screen.fill(BG)
     
-    try:
-        fond = pygame.image.load("Assets/obese.jpg").convert()
-        lengthFond : list[int] = fond.get_size()
+    #update anim
+    currentTime = pygame.time.get_ticks()
+    if currentTime - lastUpdate >= animCD:
+        frame += 1
+        lastUpdate = currentTime
+        if frame >= len(animList[action]):
+            frame = 0
 
-        personnage = pygame.image.load("Assets/perso.png").convert_alpha()
-        personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
+    # print les img
+    screen.blit(animList[action][frame], (0, 0))
 
-        
-        pnj1 = pygame.image.load("Assets/pnj1.png").convert_alpha()
-        pnj2 = pygame.image.load("Assets/pnj2.png").convert_alpha()
-        pnj3 = pygame.image.load("Assets/pnj3.png").convert_alpha()
-        
-        # Liste de tous les pnjs
-        AnimMainCara = [pnj1, pnj2, pnj3]
-
-        lengthNpc = AnimMainCara[AnimMainCara].get_size()
-
-    except pygame.error as e:
-        print("Erreur lors du chargement des images :", str(e))
-        pygame.quit()
-        exit()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
             
-    # Position initiale du personnage
-    position_x = 0
-    position_y = lengthFond[1] - 501
+            run = False
 
-    # Variables de mouvement du personnage
-    vitesse_x = 0
-    vitesse_y = 0
-    nombre_sauts = 2
-    is_running = False  # Variable pour vérifier si la touche Shift est enfoncée
+    pygame.display.update()
 
-    # Position initiale de la caméra
-    camera_x = 0
-    camera_y = 0
-
-    # Taille de la zone de la caméra
-    CAMERA_LARGEUR = LARGEUR // 2
-    CAMERA_HAUTEUR = HAUTEUR // 2
-
-
-    # Fonction de mouvement du personnage
-    def deplacer_personnage():
-        nonlocal position_x, position_y, vitesse_x, vitesse_y, nombre_sauts
-
-        # Appliquer la gravité au personnage
-        vitesse_y += GRAVITE
-
-        # Mettre à jour la position du personnage
-        position_x += vitesse_x
-        position_y += vitesse_y
-
-        # Limiter la position du personnage à l'écran
-        position_x = max(0, min(position_x, lengthFond[0] - PERSONNAGE_LARGEUR))
-        position_y = max(0, min(position_y, lengthFond[1] - PERSONNAGE_HAUTEUR - 300))
-
-        # Réinitialiser le nombre de sauts si le personnage est au sol
-        if position_y >= lengthFond[1] - PERSONNAGE_HAUTEUR - 300:
-            nombre_sauts = 0
-
-    # Fonction pour déplacer la caméra
-    def deplacer_camera():
-        nonlocal camera_x, camera_y
-
-        delta_x = position_x - (camera_x + CAMERA_LARGEUR // 2)
-        delta_y = position_y - (camera_y + CAMERA_HAUTEUR // 2)
-
-        if camera_x <= 0 and delta_x < 0:
-            delta_x = 0
-
-        if camera_x + LARGEUR >= lengthFond[0] and delta_x > 0:
-            delta_x = 0
-
-        if camera_y <= 0 and delta_y < 0:
-            delta_y = 0
-
-        if camera_y + HAUTEUR >= lengthFond[1] and delta_y > 0:
-            delta_y = 0
-
-        camera_x += delta_x * 0.1
-        camera_y += delta_y * 0.1
-
-        
-
-# Boucle principale du jeu
-    running = True
-    clock = pygame.time.Clock()
-    while running:
-        # Gestion des événements
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                running = False
-            elif event.type == KEYDOWN:
-                if event.key == K_LEFT:
-                    vitesse_x = -VITESSE_X
-                elif event.key == K_RIGHT:
-                    vitesse_x = VITESSE_X
-                elif event.key == K_SPACE and nombre_sauts < 2:
-                    vitesse_y = -VITESSE_Y
-                    nombre_sauts += 1
-                elif event.key == K_LSHIFT or event.key == K_RSHIFT:
-                    if not is_running:
-                        VITESSE_X = VITESSE_COURSE
-                        is_running = True  # La touche Shift est enfoncée
-                elif event.key == K_ESCAPE:
-                    running = False
-            elif event.type == KEYUP:
-                if event.key == K_LEFT and vitesse_x < 0:
-                    vitesse_x = 0
-                elif event.key == K_RIGHT and vitesse_x > 0:
-                    vitesse_x = 0
-                elif event.key == K_LSHIFT or event.key == K_RSHIFT:
-                    if is_running:
-                        VITESSE_X = 5
-                        is_running = False  # La touche Shift est relâchée
-
-        # Déplacer le personnage
-        deplacer_personnage()
-
-        # Déplacer la caméra
-        deplacer_camera()
-
-        fenetre.fill((0,0,0))
-
-        # Afficher le fond à l'arrière-plan
-        fenetre.blit(fond, (0 - camera_x, 0 - camera_y))
-
-        # Afficher le personnage à sa position actuelle (par rapport à la caméra)
-        fenetre.blit(personnage, (position_x - camera_x, position_y - camera_y)) 
-
-        # Mettre à jour l'affichage
-        pygame.display.flip()
-
-        # Limiter la vitesse de rafraîchissement à 60 FPS
-        clock.tick(60)
-
-    # Quitter Pygame après la sortie de la boucle principale
-    pygame.quit()
+pygame.quit()
