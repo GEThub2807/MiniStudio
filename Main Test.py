@@ -21,6 +21,8 @@ PNJ_DEPART_Y = HAUTEUR - PNJ_HAUTEUR
 PNJ_ARRIVEE_X = 600
 PNJ_ARRIVEE_Y = HAUTEUR - PNJ_HAUTEUR
 
+COLOR = (255, 0, 0)
+
 # Initialisation de Pygame
 pygame.init()
 
@@ -34,28 +36,63 @@ y = HAUTEUR - PLATEFORME_HAUTEUR - 75  # x pixels du bas de l'écran
 class PlateformeBalcon(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((PLATEFORME_LARGEUR, PLATEFORME_HAUTEUR), pygame.SRCALPHA)
-        self.image.fill((255, 0, 0))
+        self.image = pygame.Surface((PLATEFORME_LARGEUR, PLATEFORME_HAUTEUR))
+        self.image.fill (COLOR) # Remplir la surface avec la couleur définie
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+
+    def GetCollision(self, rect: pygame.rect.Rect) -> tuple[int, int]:
+        #0 => None
+        #1 => Left
+        #2 => Right
+        #3 => Top
+        #4 => Bottom 
+
+        if rect.right < self.Rect.left:
+            return 0, 0
+        
+        if rect.left > self.Rect.right:
+            return 0, 0
+        
+        if rect.top > self.Rect.bottom:
+            return 0, 0
+        
+        if rect.bottom < self.Rect.top:
+            return 0, 0
+
+        distances: list[int] = []
+        distances.append(abs(rect.right - self.Rect.left))
+        distances.append(abs(rect.left - self.Rect.right))
+        distances.append(abs(rect.bottom - self.Rect.top))
+        distances.append(abs(rect.top - self.Rect.bottom))
+
+        minDistance = 2000
+        side: int = 0
+        for i in range(0, len(distances)):
+            if minDistance > distances[i]:
+                minDistance = distances[i]
+                side = i + 1
+        
+        return side, minDistance
 
 plateformes = []
 
 plateforme_positions = [(35, HAUTEUR - PLATEFORME_HAUTEUR - 75),
                         (465, HAUTEUR - PLATEFORME_HAUTEUR - 75),
+                        (850, HAUTEUR - PLATEFORME_HAUTEUR - 75),
                         # Ajoutez autant de positions de plateformes que vous le souhaitez
                         ]
 
 def ajouter_plateforme(x, y):
     plateforme = PlateformeBalcon(x, y)
     plateformes.append(plateforme)
-
+    
 # Charger l'image du fond + joueur + PNJ
-try:
+try:    
     fond = pygame.image.load("Assets/BG5.png").convert_alpha()
     fond = pygame.transform.scale(fond, (LARGEUR, HAUTEUR))
-    personnage = pygame.image.load("Assets/JeanMichelTeste.png").convert_alpha()
+    personnage = pygame.image.load("Assets/pnj.png").convert_alpha()
     personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
     pnj = pygame.image.load("Assets/PNJ.png").convert_alpha()
     pnj = pygame.transform.scale(pnj, (PNJ_LARGEUR, PNJ_HAUTEUR))
@@ -68,6 +105,7 @@ except pygame.error as e:
 position_x = 100
 position_y = 400
 onGround = False
+player = pygame.Rect(position_x, position_y, PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR)
 
 # Position initiale du PNJ
 pnj_x = PNJ_DEPART_X
@@ -110,7 +148,7 @@ def collision_pnj():
     global position_x, position_y, vitesse_x, vitesse_y, onGround
 
     # Vérifier la collision avec la plateforme
-    if PlateformCollision(pygame.Rect(x,y,PLATEFORME_LARGEUR,PLATEFORME_HAUTEUR), pygame.Rect(position_x,position_y,PERSONNAGE_LARGEUR,PERSONNAGE_HAUTEUR)): 
+    if PlateformCollision(pygame.Rect(x,y,PLATEFORME_LARGEUR,PLATEFORME_HAUTEUR), player): 
         position_y = y - PERSONNAGE_HAUTEUR
         onGround = True
         vitesse_y = 0  # Arrêter le mouvement vertical
@@ -175,9 +213,26 @@ while running:
     # Déplacer le personnage
     deplacer_personnage()
 
-    if PlateformCollision(pygame.Rect(x,y,PLATEFORME_LARGEUR,PLATEFORME_HAUTEUR), pygame.Rect(position_x,position_y,PERSONNAGE_LARGEUR,PERSONNAGE_HAUTEUR)): 
-        position_y = y - PERSONNAGE_HAUTEUR
-        onGround = True
+    sides = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+    for i in plateformes: 
+
+        side, distance = i.GetCollision(player.playerRect)
+
+        if side == 0:
+            continue
+
+        side -= 1
+
+        if side == 3 and i.solidity == False:
+            continue
+
+        direction = sides[side]
+        player.posX += direction[0] * distance
+        player.posY += direction[1] * distance
+
+        if side == 2:
+            player.PlayerOnGround(i.Rect.top)
 
     # Déplacer le PNJ avec gestion de collision
     pnj_x += direction_pnj * 1
@@ -198,7 +253,12 @@ while running:
     # Afficher le personnage à sa position actuelle
     fenetre.blit(personnage, (position_x, position_y))
     for plateforme in plateformes:
-        fenetre.blit(plateforme.image, plateforme.rect)
+        if PlateformCollision(plateforme.rect, personnage_rect):
+            position_y = plateforme.rect.top - PERSONNAGE_HAUTEUR
+            onGround = True
+            vitesse_y = 0
+    for position in plateforme_positions:
+        ajouter_plateforme(position[0], position[1])
 
     # Afficher le PNJ à sa position actuelle
     fenetre.blit(pnj, (pnj_x, pnj_y))
