@@ -213,27 +213,6 @@ while running:
     # Déplacer le personnage
     deplacer_personnage()
 
-    sides = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-
-    for i in plateformes: 
-
-        side, distance = i.GetCollision(player.playerRect)
-
-        if side == 0:
-            continue
-
-        side -= 1
-
-        if side == 3 and i.solidity == False:
-            continue
-
-        direction = sides[side]
-        player.posX += direction[0] * distance
-        player.posY += direction[1] * distance
-
-        if side == 2:
-            player.PlayerOnGround(i.Rect.top)
-
     # Déplacer le PNJ avec gestion de collision
     pnj_x += direction_pnj * 1
 
