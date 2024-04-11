@@ -7,6 +7,8 @@ import spritesheet
 
 
 from plateformes import PlateformesRythm
+import spritesheet
+import os
 
 
 class Jeu:
@@ -21,8 +23,17 @@ class Jeu:
         VITESSE_COURSE = 10  # Vitesse de déplacement en mode course
         PERSONNAGE_LARGEUR = 50  # Largeur du personnage
         PERSONNAGE_HAUTEUR = 50  # Hauteur du personnage
+<<<<<<< Updated upstream
         """ NPC_VITESSE = randint(-5, -3) if randint(0, 1) else randint(3, 5) """
         NPC_VITESSE= randint(-5, -3) if randint(0, 1) else randint(3, 5)
+=======
+        SPAWN_INTERVAL = 3  # Intervalle de spawn en secondes pour les PNJs
+
+        #""" NPC_VITESSE = randint(-5, -3) if randint(0, 1) else randint(3, 5) """
+        NPC_VITESSE = -5
+        #------------------------------------------------------------Constante fin-----------------------------------------------------------------------------
+
+>>>>>>> Stashed changes
         # crée variable score
         score = 0
         # crée variable de collectibles requis
@@ -41,6 +52,7 @@ class Jeu:
 
         # Charger les images des personnages et du fond
         try:
+<<<<<<< Updated upstream
             fond = pygame.image.load("Assets/obese.jpg").convert()
             lengthFond : list[int] = fond.get_size()
 
@@ -51,6 +63,18 @@ class Jeu:
             pnj1 = pygame.image.load("Assets/pnj1.png").convert_alpha()
             pnj2 = pygame.image.load("Assets/pnj2.png").convert_alpha()
             pnj3 = pygame.image.load("Assets/pnj3.png").convert_alpha()
+=======
+            fond = pygame.image.load("Assets/background.png").convert()
+            Length_Fond : list[int] = fond.get_size()
+
+            personnage = pygame.image.load("Asset/Ampoule_idle/Ampoule_idle0001.png").convert_alpha()
+            personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
+
+            
+            pnj1 = pygame.image.load("Asset/PNJ_BM_Idle/PNJ_BM0001.png").convert_alpha()
+            pnj2 = pygame.image.load("Asset/PNJ_Mouette_Idle/01.png").convert_alpha()
+            pnj3 = pygame.image.load("Asset/PNJ_Sardine_Idle/01.png").convert_alpha()
+>>>>>>> Stashed changes
             
             # Liste de tous les pnjs
             npc = [pnj1, pnj2, pnj3]
@@ -92,6 +116,102 @@ class Jeu:
             pygame.Rect(800, 750, 23, 23),
             pygame.Rect(1200, 750, 23, 23)
         ]
+<<<<<<< Updated upstream
+=======
+        #------------------------------------------------------Initialisation des collectibles,Fin, Timothé------------------------------------------
+        # This is where the text is stored
+        firstTextList = ["texte 1", "texte 2", "texte 3"]
+        qcm = ["QCM:", "reponse fausse", "reponse vraie", "reponse fausse", "reponse fausse"]
+        qcmBonneReponse = 2
+
+        # Creates the text box into an image then includes it into the scene
+        def displayText(text, font, textColor, x, y):
+            img = font.render(text, True, textColor)
+            fenetre.blit(img, (x, y))
+
+        # Font
+        textFont = pygame.font.SysFont("Arial", 30)
+
+        def NPCDialog(count, dialogList, interactKey):
+            run = True
+            while run:
+                for event in pygame.event.get():
+                            # Exits the game when clicking the X
+                            if event.type == pygame.QUIT:
+                                run = False
+                            # Displays the text
+                            if event.type == pygame.KEYDOWN:
+                                pressed = pygame.key.get_pressed()
+                                if pressed[interactKey]:
+                                    count += 1
+                                    fenetre.fill((0,0,0)) # Clears the screen
+                                    displayText(dialogList[count], textFont, (0, 0, 0), LARGEUR/4, HAUTEUR/4) # Display the text
+                                    pygame.display.flip()
+                                    
+                                    # If the list has reached its end, exit the function
+                                    if len(dialogList) == count + 1:
+                                        run = False
+        def Select(arrayLength, dialogList, spacing, diffSelect):
+            fenetre.fill((0,0,0)) # Clears the screen
+            
+            # Display the text
+            for x in range(arrayLength):
+                displayText(dialogList[x], textFont, (0, 0, 0), LARGEUR/4, HAUTEUR/4 + x*spacing)
+
+            # Displays selected text in a different color
+            displayText(dialogList[diffSelect], textFont, (147, 0, 191), LARGEUR/4, HAUTEUR/4 + (diffSelect)*spacing)
+            
+            # Refreshes the screen
+            pygame.display.flip()
+
+        def NPCQCM(count, dialogList, interactKey, qcmBonneReponse):
+            run = True
+            spacing = 50
+            selection = 1
+            
+            while run:
+                for event in pygame.event.get():
+                    # Exits the game when clicking the X
+                    if event.type == pygame.QUIT:
+                        run = False
+                    # Displays the text
+                    if event.type == pygame.KEYDOWN:
+                        pressed = pygame.key.get_pressed()
+                        if pressed[interactKey]:
+                            count += 1
+                            fenetre.fill((0,0,0)) # Clears the screen
+                            
+                            # Display the text
+                            arrayLength = len(dialogList)
+                            for x in range(arrayLength):
+                                displayText(dialogList[x], textFont, (0, 0, 0), LARGEUR/4, HAUTEUR/4 + x*spacing)
+                            # Initial selected
+                            displayText(dialogList[1], textFont, (147, 0, 191), LARGEUR/4, HAUTEUR/4 + spacing)
+                            
+                            if count == 1:
+                                fenetre.fill((0,0,0)) # Clears the screen
+                                if selection == qcmBonneReponse:
+                                    displayText("Correct!", textFont, (0, 0, 0), LARGEUR/4, HAUTEUR/4 + spacing)
+                                else:
+                                    displayText("Faux!", textFont, (0, 0, 0), LARGEUR/4, HAUTEUR/4 + spacing)
+                            
+                            # Exit
+                            if count == 2:
+                                run = False
+                            
+                            pygame.display.flip() # Refresh
+                            
+                        # Selection
+                        if pressed[pygame.K_UP] and selection > 1: # Up
+                            Select(arrayLength, dialogList, spacing, selection - 1)
+                            selection = selection - 1
+                        
+                        if pressed[pygame.K_DOWN] and selection < (len(qcm)-1): # Down
+                            Select(arrayLength, dialogList, spacing, selection + 1)
+                            selection = selection + 1
+
+#--------------------------------------------------------Système basiques du jeu, Début, Valentin, Antoine-------------------------------------
+>>>>>>> Stashed changes
         # Fonction de mouvement du personnage
         def deplacer_personnage():
             nonlocal position_x, position_y, vitesse_x, vitesse_y, nombre_sauts
@@ -307,6 +427,7 @@ class Jeu:
             def spawn_fish(self):
                 global position_x, position_y
 
+<<<<<<< Updated upstream
                 # Vérifier si aucun poisson n'est actuellement apparu et s'il y a des PNJs
                 if not self.is_fish_spawned and self.npcs:
                     # Vérifier si un PNJ est à proximité du joueur
@@ -326,6 +447,36 @@ class Jeu:
 
         animList = [] #crée le tableau avec les sprites pour l'anim
         animSteps = [4, 6, 3 , 4] #définit le nombre de sprites qui seront affichées
+=======
+        #-----------------------------------------------------------Systèmes des plateformes, Fin, Timothé---------------------------------------------
+        #-----------------------------------------------------------Initialisation des animations, début, Elouan------------------------------------
+
+        pygame.display.set_caption('Spritesheets')
+
+        # Charger toutes les images du dossier Ampoule_Idle dans une liste
+        image_list_Ampoule_Idle = []
+        for filename in os.listdir("Asset/Ampoule_Idle"):
+            if filename.endswith(".png"):
+                image_list_Ampoule_Idle.append(pygame.image.load(os.path.join("Asset/Ampoule_Idle", filename)).convert_alpha())
+
+        sprite_sheet_Ampoule_Idle = spritesheet.SpriteSheet(image_list_Ampoule_Idle)
+
+        image_list_Ampoule_Walk = []
+        for filename in os.listdir("Asset/Ampoule_Marche"):
+            if filename.endswith(".png"):
+                image_list_Ampoule_Walk.append(pygame.image.load(os.path.join("Asset/Ampoule_Marche", filename)).convert_alpha())
+
+        sprite_sheet_Ampoule_Walk = spritesheet.SpriteSheet(image_list_Ampoule_Walk)
+
+        image_list_Ampoule_Jump = []
+        for filename in os.listdir("Asset/Ampoule_Saut"):
+            if filename.endswith(".png"):
+                image_list_Ampoule_Jump.append(pygame.image.load(os.path.join("Asset/Ampoule_Saut", filename)).convert_alpha())
+
+        sprite_sheet_Ampoule_Jump = spritesheet.SpriteSheet(image_list_Ampoule_Jump)
+        Anim_List = [] #crée le tableau avec les sprites pour l'anim
+        Anim_Steps = 10 #définit le nombre de sprites qui seront affichées
+>>>>>>> Stashed changes
         action = 0
         lastUpdate = pygame.time.get_ticks()
         animCD = 500 #définit le temps de la boucle d'animation
@@ -360,10 +511,13 @@ class Jeu:
                 elif event.type == KEYDOWN:
                     if event.key == K_LEFT:
                         vitesse_x = -VITESSE_X
+                        animation.start()
                     elif event.key == K_RIGHT:
                         vitesse_x = VITESSE_X
+                        animation.start()
                     elif event.key == K_SPACE and nombre_sauts < 2:
                         vitesse_y = -VITESSE_Y
+                        animation.start()
                         nombre_sauts += 1
                     elif event.key == K_LSHIFT or event.key == K_RSHIFT:
                         if not is_running:
@@ -382,10 +536,28 @@ class Jeu:
                             is_running = False  # La touche Shift est relâchée
                 elif event.type == USEREVENT:
                     Timer += 1
+                elif event.type == pygame.KEYDOWN:
+                    pressed = pygame.key.get_pressed()
 
+<<<<<<< Updated upstream
                     if Timer == 3:
                         Loop += 1
                         Timer = 0
+=======
+            
+
+            if Timer == 3:
+                Loop += 1
+                Timer = 0
+
+            # Mettre à jour le gestionnaire de PNJs pour gérer les spawns
+            npc_manager.update()
+
+            # Mettre à jour les positions et les actions des PNJs existants
+            for npc in npc_manager.npcs:
+                npc.move()
+
+>>>>>>> Stashed changes
             #update anim
             currentTime = pygame.time.get_ticks()
             if currentTime - lastUpdate >= animCD:
@@ -453,6 +625,11 @@ class Jeu:
 
             # Limiter la vitesse de rafraîchissement à 60 FPS
             clock.tick(60)
+<<<<<<< Updated upstream
 
+=======
+        #-----------------------------------------------------------Boucle de jeu du level, fin, tout le monde--------------------------------------------------------
+        
+>>>>>>> Stashed changes
         # Quitter Pygame après la sortie de la boucle principale
         pygame.quit()

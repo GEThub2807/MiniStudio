@@ -21,5 +21,5 @@ class SpriteSheet():
 		self.index = self.elapsed_time / animation_delay
 		self.index %= frame_count 
 
-	def draw(self, screen):
-		screen.blit(self.sheet, (0, 0), (32 * self.index, 24, 32, 24))
+	def draw(self, fenetre):
+		fenetre.blit(self.sheet, (0, 0), (32 * self.index, 24, 32, 24))
