@@ -12,6 +12,8 @@ VITESSE_Y = 10
 VITESSE_COURSE = 10  # Vitesse de déplacement en mode course
 PERSONNAGE_LARGEUR = 100  # Largeur du personnage
 PERSONNAGE_HAUTEUR = 70  # Hauteur du personnage
+GREEN = (144, 201, 120)
+scroll = 0
 
 # Constantes PLATEFORME
 PLATEFORME_LARGEUR = 145  # Largeur de la plateforme
@@ -110,6 +112,7 @@ plateforme_positions = [(35, HAUTEUR - PLATEFORME_HAUTEUR - 75), #1
                         (1217, HAUTEUR - PLATEFORME_HAUTEUR - 490),#21
                         (1112, HAUTEUR - PLATEFORME_HAUTEUR - 490),#21-2
                         (1728, HAUTEUR - PLATEFORME_HAUTEUR - 490),#22
+                        (1728, HAUTEUR - PLATEFORME_HAUTEUR - 650),#22
                         # Ajoutez autant de positions de plateformes que vous le souhaitez
                         ]
 
@@ -119,8 +122,11 @@ def ajouter_plateforme(x, y):
     
 # Charger l'image du fond + joueur + PNJ
 try:    
-    fond = pygame.image.load("Assets/BG5.png").convert_alpha()
+    fond = pygame.image.load("Asset/Rue_du_panier.png").convert_alpha()
     fond = pygame.transform.scale(fond, (LARGEUR, HAUTEUR))
+    ground = pygame.image.load("Asset/SOL.png").convert_alpha()
+    ground = pygame.transform.scale(ground, (LARGEUR, HAUTEUR))
+    fenetre.blit(ground, (0, HAUTEUR - ground.get_height()))
     personnage = pygame.image.load("Assets/pnj.png").convert_alpha()
     personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
     pnj = pygame.image.load("Assets/PNJ.png").convert_alpha()
@@ -130,9 +136,29 @@ except pygame.error as e:
     pygame.quit()
     exit()
 
+#load images
+def load_images():
+    global sky_img, Notre_dame, ground, initial_ground_height
+    sky_img = pygame.image.load("sky.png")
+    Notre_dame = pygame.image.load("bonne_mere.png")
+    ground = pygame.image.load("sol.png")
+    initial_ground_height = ground.get_height() # Stocker la hauteur initiale du sol
+
+#store tiles in a list
+img_list = []
+
+#create function for drawing background
+def draw_bg():
+    fenetre.fill(GREEN)
+    width = sky_img.get_width()
+    for x in range(4):
+        fenetre.blit(sky_img, ((x * width) - scroll * 0.5, 0))
+        fenetre.blit(Notre_dame, ((x * width) - scroll * 0.6, 0))
+    fenetre.blit(ground, (0, 100 - initial_ground_height)) # Utiliser la hauteur initiale du sol
+
 # Position initiale du personnage
 position_x = 100
-position_y = 400
+position_y = 1000
 onGround = False
 player = pygame.Rect(position_x, position_y, PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR)
 
