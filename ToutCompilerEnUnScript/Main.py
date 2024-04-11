@@ -35,7 +35,7 @@ plateforme.fill((0, 255, 0))  # Remplir la plateforme de vert
 
 # Charger l'image du fond + joueur + PNJ
 try:
-    fond = pygame.image.load("Assets/Fond.jpg").convert()
+    fond = pygame.image.load("Asset/SFX/Fond_Game.jpg").convert()
     fond = pygame.transform.scale(fond, (LARGEUR, HAUTEUR))
     personnage = pygame.image.load("Assets/Cube.png").convert_alpha()
     personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
