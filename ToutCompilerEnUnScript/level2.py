@@ -122,11 +122,11 @@ def run_game():
 
     # Charger l'image du fond + joueur + PNJ
     try:
-        fond = pygame.image.load("Assets/BG5.png").convert_alpha()
+        fond = pygame.image.load("Asset/BG/Rue_du_panier.png").convert_alpha()
         fond = pygame.transform.scale(fond, (LARGEUR, HAUTEUR))
-        personnage = pygame.image.load("Assets/pnj.png").convert_alpha()
+        personnage = pygame.image.load("Asset/SFX/pnj.png").convert_alpha()
         personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
-        pnj = pygame.image.load("Assets/pnj.png").convert_alpha()
+        pnj = pygame.image.load("Asset/SFX/pnj.png").convert_alpha()
         pnj = pygame.transform.scale(pnj, (PNJ_LARGEUR, PNJ_HAUTEUR))
     except pygame.error as e:
         print("Erreur lors du chargement de l'image du fond :", str(e))
@@ -208,7 +208,7 @@ def run_game():
         return False
 
     # Charge la police d'écriture installé
-    font = pygame.font.Font("Assets/Parisish.ttf", 50)
+    font = pygame.font.Font("Asset/SFX/Parisish.ttf", 50)
 
     def Print_FPS(fps):
         pygame.draw.rect(fenetre, (0, 0, 0), (1620, 0, 300, 50))
