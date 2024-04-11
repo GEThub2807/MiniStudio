@@ -43,7 +43,6 @@ class PlateformeBalcon(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((PLATEFORME_LARGEUR, PLATEFORME_HAUTEUR))
         self.image.fill (COLOR) # Remplir la surface avec la couleur définie
-        pygame.display.flip()
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -83,7 +82,8 @@ plateformes = []
 
 plateforme_positions = [(35, HAUTEUR - PLATEFORME_HAUTEUR - 75),
                         (465, HAUTEUR - PLATEFORME_HAUTEUR - 75),
-                        (850, HAUTEUR - PLATEFORME_HAUTEUR - 75),
+                        (902, HAUTEUR - PLATEFORME_HAUTEUR - 68),
+                        (1110, HAUTEUR - PLATEFORME_HAUTEUR - 73),
                         # Ajoutez autant de positions de plateformes que vous le souhaitez
                         ]
 
@@ -234,7 +234,9 @@ while running:
 
     # Afficher le personnage à sa position actuelle
     fenetre.blit(personnage, (position_x, position_y))
+    pygame.draw.rect(fenetre, (0, 0, 0), personnage_rect)
     for plateforme in plateformes:
+        pygame.draw.rect(fenetre, COLOR, plateforme.rect)
         if PlateformCollision(plateforme.rect, personnage_rect):
             position_y = plateforme.rect.top - PERSONNAGE_HAUTEUR
             onGround = True
