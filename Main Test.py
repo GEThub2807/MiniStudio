@@ -16,6 +16,10 @@ PERSONNAGE_HAUTEUR = 70  # Hauteur du personnage
 # Constantes PLATEFORME
 PLATEFORME_LARGEUR = 145  # Largeur de la plateforme
 PLATEFORME_HAUTEUR = 20  # Hauteur de la plateforme
+PLATEFORME2_LARGEUR = 145  # Largeur de la plateforme
+PLATEFORME2HAUTEUR = 20  # Hauteur de la plateforme
+PLATEFORME3_LARGEUR = 145  # Largeur de la plateforme
+PLATEFORME3HAUTEUR = 20  # Hauteur de la plateforme
 
 # Points de départ et d'arrivée du PNJ
 PNJ_LARGEUR = 70
@@ -80,10 +84,32 @@ class PlateformeBalcon(pygame.sprite.Sprite):
 
 plateformes = []
 
-plateforme_positions = [(35, HAUTEUR - PLATEFORME_HAUTEUR - 75),
-                        (465, HAUTEUR - PLATEFORME_HAUTEUR - 75),
-                        (902, HAUTEUR - PLATEFORME_HAUTEUR - 68),
-                        (1110, HAUTEUR - PLATEFORME_HAUTEUR - 73),
+plateforme_positions = [(35, HAUTEUR - PLATEFORME_HAUTEUR - 75), #1
+                        (465, HAUTEUR - PLATEFORME_HAUTEUR - 75), #2
+                        (902, HAUTEUR - PLATEFORME_HAUTEUR - 68), #3
+                        (1112, HAUTEUR - PLATEFORME_HAUTEUR - 61),#4
+                        (1290, HAUTEUR - PLATEFORME_HAUTEUR - 61),#5
+                        (1728, HAUTEUR - PLATEFORME_HAUTEUR - 60),#6
+                        (1728, HAUTEUR - PLATEFORME_HAUTEUR - 271),#7
+                        (1410, HAUTEUR - PLATEFORME_HAUTEUR - 271),#8
+                        (1518, HAUTEUR - PLATEFORME_HAUTEUR - 271),#8-2
+                        (1217, HAUTEUR - PLATEFORME_HAUTEUR - 271),#9
+                        (1112, HAUTEUR - PLATEFORME_HAUTEUR - 271),#9-2
+                        (902, HAUTEUR - PLATEFORME_HAUTEUR - 288),#10
+                        (685, HAUTEUR - PLATEFORME_HAUTEUR - 288),#11
+                        (482, HAUTEUR - PLATEFORME_HAUTEUR - 308),#12
+                        (252, HAUTEUR - PLATEFORME_HAUTEUR - 308),#13
+                        (35, HAUTEUR - PLATEFORME_HAUTEUR - 308),#14
+                        (35, HAUTEUR - PLATEFORME_HAUTEUR - 515),#15
+                        (252, HAUTEUR - PLATEFORME_HAUTEUR - 515),#16
+                        (482, HAUTEUR - PLATEFORME_HAUTEUR - 515),#17
+                        (685, HAUTEUR - PLATEFORME_HAUTEUR - 520),#18
+                        (902, HAUTEUR - PLATEFORME_HAUTEUR - 520),#19
+                        (1410, HAUTEUR - PLATEFORME_HAUTEUR - 490),#20
+                        (1518, HAUTEUR - PLATEFORME_HAUTEUR - 490),#20-2
+                        (1217, HAUTEUR - PLATEFORME_HAUTEUR - 490),#21
+                        (1112, HAUTEUR - PLATEFORME_HAUTEUR - 490),#21-2
+                        (1728, HAUTEUR - PLATEFORME_HAUTEUR - 490),#22
                         # Ajoutez autant de positions de plateformes que vous le souhaitez
                         ]
 
