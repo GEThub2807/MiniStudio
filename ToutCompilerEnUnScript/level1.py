@@ -11,7 +11,6 @@ class Jeu:
     @staticmethod
     def run_game():
         # ------------------------------------------------------------Constantes début, tout le monde-----------------------------------------------------------------
-        BLACK = (0, 0, 0)
         LARGEUR = 1920  # Largeur de la fenêtre du jeu
         HAUTEUR = 1080  # Hauteur de la fenêtre du jeu
         GRAVITE = 0.5

@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 from tools import EventHandle
-from level1 import *
+from Main_Test import *
 import level2
 
 pygame.init()
