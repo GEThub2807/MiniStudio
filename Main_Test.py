@@ -1,9 +1,11 @@
 import pygame
 from pygame.locals import *
+#from ToutCompilerEnUnScript import NPC Dialogue + QCM
+from NPCDialogueQCM import *
 
 # Constantes
-LARGEUR = 1920  # Largeur de la fenêtre du jeu
-HAUTEUR = 1080  # Hauteur de la fenêtre du jeu
+LARGEUR = 1920/2  # Largeur de la fenêtre du jeu
+HAUTEUR = 1080/2  # Hauteur de la fenêtre du jeu
 
 # Constantes JOUEUR
 GRAVITE = 0.5
@@ -18,10 +20,6 @@ scroll = 0
 # Constantes PLATEFORME
 PLATEFORME_LARGEUR = 145  # Largeur de la plateforme
 PLATEFORME_HAUTEUR = 20  # Hauteur de la plateforme
-PLATEFORME2_LARGEUR = 145  # Largeur de la plateforme
-PLATEFORME2HAUTEUR = 20  # Hauteur de la plateforme
-PLATEFORME3_LARGEUR = 145  # Largeur de la plateforme
-PLATEFORME3HAUTEUR = 20  # Hauteur de la plateforme
 
 # Points de départ et d'arrivée du PNJ
 PNJ_LARGEUR = 70
@@ -125,7 +123,6 @@ try:
     fond = pygame.image.load("Asset/Rue_du_panier.png").convert_alpha()
     fond = pygame.transform.scale(fond, (LARGEUR, HAUTEUR))
     ground = pygame.image.load("Asset/SOL.png").convert_alpha()
-    ground = pygame.transform.scale(ground, (LARGEUR, HAUTEUR))
     fenetre.blit(ground, (0, HAUTEUR - ground.get_height()))
     personnage = pygame.image.load("Assets/pnj.png").convert_alpha()
     personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
@@ -230,10 +227,44 @@ def PlateformCollision(PlatRect, PlayerRect):
             return True
         return False
 
-# Boucle principale du jeu
+# Creates the text box into an image then includes it into the scene
+def displayTextPrint(text, font, textColor, x, y, fenetre):
+    img = font.render(text, True, textColor)
+    fenetre.blit(img, (x, y))
+
+# Quelques variables
 running = True
 clock = pygame.time.Clock()
+afficherTexte = False
+afficherQCM = False
+count = -1
+playIntro = True
+playEnfant = False
+choixEnfant = False
+textColor = (255, 255, 255)
+textColorSelected = (17, 255, 0)
+
+# QCM specific
+run = True
+spacing = 30
+selection = 1
+
+# Boucle principale du jeu
 while running:
+    # Afficher le fond à l'arrière-plan
+    fenetre.blit(fond, (0, 0))
+    
+    # Display dialog partie trigger
+    if afficherTexte == True:
+        displayTextPrint(currentText[count], textFont, textColor, pos_intro_x, pos_intro_y, fenetre)
+
+    if afficherQCM == True:
+        # Selected
+        displayTextPrint(enfantChoix[selection], textFont, textColorSelected, pos_intro_x, pos_intro_y + selection*spacing, fenetre)
+        # Display QCM
+        for x in range(arrayLength):
+            displayTextPrint(enfantChoix[x], textFont, textColor, pos_intro_x, pos_intro_y + x*spacing, fenetre)
+    
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
@@ -252,6 +283,89 @@ while running:
                     is_running = True
             elif event.key == K_ESCAPE:
                 running = False
+            
+            # There has to be a better way than this, but i cant figure it out so this is fine
+            # Dialogue intro
+            elif event.key == interactKey and len(Introduction) != count and playIntro == True:
+                currentText = Introduction
+                count += 1
+                afficherTexte = True
+                pygame.display.flip()
+
+                # If the list has reached its end, exit the function and play the next one
+                if len(Introduction) == count:
+                    afficherTexte = False
+                    count = -1
+                    playIntro = False
+                    playEnfant = True
+            
+            # Dialogue intro question enfant (copy paste)
+            elif event.key == interactKey and len(enfantIntro) != count and playEnfant == True:
+                currentText = enfantIntro
+                count += 1
+                afficherTexte = True
+                pygame.display.flip()
+
+                if len(Introduction) == count and choixEnfant == False:
+                    afficherTexte = False
+                    count = -1
+                    playEnfant = False
+                    choixEnfant = True
+                
+                if choixEnfant == True:
+                    count = count + 1
+                    arrayLength = len(enfantChoix)
+                    afficherQCM = True
+                    count = -1
+                    playQCM = True
+            
+            # Selection
+            elif event.key == pygame.K_UP and selection > 1 and choixEnfant == True: # Up
+                selection = selection - 1
+                
+            elif event.key == pygame.K_DOWN and selection < (len(enfantChoix)-1) and choixEnfant == True: # Down
+                selection = selection + 1
+            
+            # Choix
+            elif event.key == interactKey and len(enfantChoixOui) != count and playQCM == True:
+                afficherQCM = False
+                choixEnfant = False
+                
+                if selection == enfantChoixReponse:
+                    currentText = enfantChoixOui
+                else:
+                    currentText = enfantChoixNon
+                
+                count = count + 1
+                afficherTexte = True
+                pygame.display.flip()
+                
+                if len(enfantChoixOui) == count and currentText == enfantChoixOui:
+                    playQCM = False
+                    afficherTexte = False
+                    count = -1
+                    enfantSuccesDialogue = True
+                    
+                if len(enfantChoixNon) == count and currentText == enfantChoixNon:
+                    playQCM = False
+                    afficherQCM = False
+                    afficherTexte = False
+                    count = -1
+                    playEnfant = True
+                    selection = 1
+            
+            elif event.key == interactKey and len(Introduction) != count and enfantSuccesDialogue == True:
+                currentText = enfantSucces
+                count += 1
+                afficherTexte = True
+                pygame.display.flip()
+
+                # If the list has reached its end, exit the function and play the next one
+                if len(Introduction) == count:
+                    afficherTexte = False
+                    count = -1
+                    enfantSuccesDialogue = False
+
         elif event.type == KEYUP:
             if event.key == K_LEFT and vitesse_x < 0:
                 vitesse_x = 0
@@ -265,6 +379,7 @@ while running:
                 nombre_sauts = 0
             elif event.key == K_DOWN and PlateformCollision(pygame.Rect(x,y,PLATEFORME_LARGEUR,PLATEFORME_HAUTEUR), pygame.Rect(position_x,position_y,PERSONNAGE_LARGEUR,PERSONNAGE_HAUTEUR)): 
                 position_y = y + PLATEFORME_HAUTEUR  # Descendre du collider
+    
     # Déplacer le personnage
     deplacer_personnage()
 
@@ -281,12 +396,9 @@ while running:
     personnage_rect = pygame.Rect(position_x, position_y, PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR)
     pnj_rect = pygame.Rect(pnj_x, pnj_y, PNJ_LARGEUR, PNJ_HAUTEUR)
 
-    # Afficher le fond à l'arrière-plan
-    fenetre.blit(fond, (0, 0))
-
     # Afficher le personnage à sa position actuelle
     fenetre.blit(personnage, (position_x, position_y))
-    pygame.draw.rect(fenetre, (0, 0, 0), personnage_rect)
+    pygame.draw.rect(fenetre, (0, 0, 0), personnage_rect) #Draws a rectangle instead so delete that
     for plateforme in plateformes:
         pygame.draw.rect(fenetre, COLOR, plateforme.rect)
         if PlateformCollision(plateforme.rect, personnage_rect):
