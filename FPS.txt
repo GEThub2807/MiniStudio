@@ -1,0 +1,6 @@
+# Ajouter cette ligne à la fin de chaque boucle de jeu pour afficher le nb de FPS 
+
+
+self.ecran.blit(font.render("FPS: " + str(round(clock.get_fps(), 2)), 1, (0, 0, 0)), (Largeur de l' Ecran - nb assez petit, 0))
+
+#Largeur de l' Ecran - nb assez petit : Pour qu'il s'affiche dans le coin droit 
