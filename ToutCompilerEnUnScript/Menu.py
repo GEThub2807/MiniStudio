@@ -233,11 +233,11 @@ def playing_menu():
                                     text_input="RETOUR", font=get_font(75), base_color="#d7fcd4",
                                     hovering_color="White")
         LVL1_BUTTON = EventHandle(image=pygame.image.load("Assets/Play Rect.png"), pos=lvl1_button_pos,
-                                  text_input="NIVEAU 1", font=get_font(75), base_color="#d7fcd4",
-                                  hovering_color="White")
+                                text_input="NIVEAU 1", font=get_font(75), base_color="#d7fcd4",
+                                hovering_color="White")
         LVL2_BUTTON = EventHandle(image=pygame.image.load("Assets/Play Rect.png"), pos=lvl2_button_pos,
-                                  text_input="NIVEAU 2", font=get_font(75), base_color="#d7fcd4",
-                                  hovering_color="White")
+                                text_input="NIVEAU 2", font=get_font(75), base_color="#d7fcd4",
+                                hovering_color="White")
 
         for button in [RETOUR_BUTTON, LVL1_BUTTON, LVL2_BUTTON]:
             button.update(SCREEN)
@@ -252,7 +252,5 @@ def playing_menu():
                     level2.run_game()
 
         pygame.display.update()
-
-
 main_menu()
 pygame.quit()
