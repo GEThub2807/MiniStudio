@@ -19,8 +19,8 @@ jump_sound = pygame.mixer.Sound("Asset/SFX/jump.mp3")
 pygame.mixer.music.play()
 
 screen_info = pygame.display.Info()
-SCREEN_HEIGHT = screen_info.current_h
-SCREEN_WIDTH = SCREEN_HEIGHT * 16/9
+SCREEN_HEIGHT = 1080
+SCREEN_WIDTH = 1920
 FULLSCREEN = True
 
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
@@ -48,7 +48,6 @@ def main_menu():
     credit_button_pos = (SCREEN_WIDTH/adjustpose, SCREEN_HEIGHT * 0.55 -40)
     quit_button_pos = (SCREEN_WIDTH/adjustpose, SCREEN_HEIGHT * 0.7 -40)
 
-    
     while running:
 
         MENU_MOUSE_POS = pygame.mouse.get_pos()
@@ -263,8 +262,6 @@ def run_game_level1():
             fenetre.blit(ground, (0, HAUTEUR - ground.get_height()))
             personnage = pygame.image.load("Asset/Bulb/Ampoule_Idle/Ampoule_idle0001.png").convert_alpha()
             personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
-            pnj = pygame.image.load("Asset/PNJ.png").convert_alpha()
-            pnj = pygame.transform.scale(pnj, (PNJ_LARGEUR, PNJ_HAUTEUR))
 
         except pygame.error as e:
             print("Erreur lors du chargement de l'image du fond :", str(e))
@@ -584,7 +581,7 @@ def run_game_level1():
         Loop = 1
         pygame.time.set_timer(USEREVENT, 1000)
         # Charge la police d'écriture installé
-        font = pygame.font.Font("Assets/Parisish.ttf", 50)
+        font = pygame.font.Font("Asset/SFX/Parisish.ttf", 50)
         # -----------------------------------------------------------Déclaration de variables et autres, fin-------------------------------------------------
 
         # QCM specific
@@ -751,8 +748,6 @@ def run_game_level1():
             for position in plateforme_positions:
                 ajouter_plateforme(position[0], position[1])
 
-            # Afficher le PNJ à sa position actuelle
-            fenetre.blit(pnj, (pnj_x, pnj_y))
 
             # Mettre à jour l'affichage
             pygame.display.flip()
