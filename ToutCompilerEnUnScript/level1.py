@@ -37,8 +37,8 @@ class Jeu:
 
         #-----------------------------------------------------------animation importation, Elouan-----------------------------------------------------------------
         pygame.display.set_caption('Spritesheets')
-        Sprite_Sheet_Image = pygame.image.load("Assets/anim.png").convert_alpha()
-        Sprite_Sheet = spritesheet.SpriteSheet(Sprite_Sheet_Image)
+        #Sprite_Sheet_Image = pygame.image.load("Assets/anim.png").convert_alpha()
+        #Sprite_Sheet = spritesheet.SpriteSheet(Sprite_Sheet_Image)
         #-----------------------------------------------------------animation-------------------------------------------------------------------------
 
         # Définir la taille de la fenêtre du jeu
@@ -49,19 +49,8 @@ class Jeu:
             fond = pygame.image.load("Assets/obese.jpg").convert()
             Length_Fond : list[int] = fond.get_size()
 
-            personnage = pygame.image.load("Asset/Ampoule idle/Ampoule_idle0001.png").convert_alpha()
+            personnage = pygame.image.load("Asset/Bulb/Ampoule_Idle/Ampoule_idle0001.png").convert_alpha()
             personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
-
-            
-            pnj1 = pygame.image.load("Asset/PNJ bonne mère idle/PNJ bonne mère - idle0001.png").convert_alpha()
-            pnj2 = pygame.image.load("Asset/PNJ mouette idle/PNJ mouette - idle0001.png").convert_alpha()
-            pnj3 = pygame.image.load("Asset/PNJ sardine idle/PNJ sardine - idle0001.png").convert_alpha()
-            
-            # Liste de tous les pnjs
-            npc = [pnj1, pnj2, pnj3]
-
-            Pnj_Choice = randint(0, len(npc) - 1)
-            Length_Npc = npc[Pnj_Choice].get_size()
 
         except pygame.error as e:
             print("Erreur lors du chargement des images :", str(e))
@@ -146,32 +135,29 @@ class Jeu:
         #-----------------------------------------------------------Systèmes des NPC, Début, Antoine---------------------------------------------
         # Fonction pour déplacer les PNJs
         class NPC:
-            def __init__(self, images, initial_x, spawn_y, velocity):
-                self.images = images
+            def __init__(self, asset_folder_path, initial_x, spawn_y, velocity):
+                #self.images = images
                 self.image_index = 0
-                self.image = images[self.image_index]
+                #self.image = images[self.image_index]
                 self.pos_x = initial_x
                 self.spawn_y = spawn_y
                 self.pos_y = spawn_y
                 self.velocity = velocity
-                self.size = self.image.get_size()
+                self.sprite: spritesheet.Sprite = spritesheet.Sprite(asset_folder_path)
+                self.size = self.sprite.get_size()
 
-                self.change_image()
-
-            def move(self):
+            def update(self, dt):
                 self.pos_x -= self.velocity
 
                 # Vérifier si le PNJ est hors de l'écran à gauche ou à droite
                 if self.pos_x <= 0 - self.size[0] and self.velocity < 0:
                     self.destroy()
 
-            def change_image(self):
-                # Changer l'image du PNJ de manière aléatoire
-                self.image_index = randint(0, len(self.images) - 1)
-                self.image = self.images[self.image_index]
+                self.sprite.update(dt)
 
             def draw(self, screen, camera_x, camera_y):
-                screen.blit(self.image, (self.pos_x - camera_x, self.pos_y - camera_y))
+                #screen.blit(self.image, (self.pos_x - camera_x, self.pos_y - camera_y))
+                self.sprite.draw(screen, self.pos_x - camera_x, self.pos_y - camera_y)
 
             def destroy(self):
                 # Code pour détruire le NPC
@@ -179,10 +165,9 @@ class Jeu:
                 self.pos_y = -1000
                 self.velocity = 0  # Arrêter le mouvement
 
-
         # Créer une instance de la classe NPC
-        npc_images = [pnj1, pnj2, pnj3]
-        npc = NPC(npc_images, randint(0, Length_Fond[0]), Length_Fond[1] - 700, NPC_VITESSE)
+        npc_assets_folder = ["Asset/PNJ_Bm", "Asset/PNJ_Sardine", "Asset/PNJ_Seagull"]
+        #npc = NPC(npc_images, randint(0, Length_Fond[0]), Length_Fond[1] - 700, NPC_VITESSE)
 
         import random
 
@@ -193,16 +178,13 @@ class Jeu:
                 self.last_fish_spawn_time = time.time()  # Temps du dernier spawn de poisson
                 self.npcs = []  # Liste des PNJs
                 
-                
-
             def update(self):
                 current_time = time.time()
                 # Vérifier si le temps écoulé depuis le dernier spawn de PNJ est supérieur à l'intervalle
                 if current_time - self.last_spawn_time >= self.spawn_interval:
                     # Ajouter un nouveau PNJ
                     npc = self.spawn_npc()  # Créer une nouvelle instance de NPC
-                    if npc:
-                        self.npcs.append(npc)
+                    self.npcs.append(npc)
                     # Mettre à jour le temps du dernier spawn de PNJ
                     self.last_spawn_time = current_time
 
@@ -210,8 +192,10 @@ class Jeu:
                 # Coordonnées initiales aléatoires dans les limites de l'écran
                 initial_x = LARGEUR + Length_Fond[0] - camera_x  # Utiliser lengthNpc pour obtenir la taille du PNJ
                 spawn_y = Length_Fond[1] - 500
-                velocity = 5  
-                return NPC(npc_images, initial_x, spawn_y, velocity)
+                velocity = 5 
+                
+                self.image_index = randint(0, len(npc_assets_folder) - 1)
+                return NPC(npc_assets_folder[self.image_index], initial_x, spawn_y, velocity)
 
         spawn_interval = 3  # Intervalle de spawn en secondes pour les PNJs
         npc_manager = NPCManager(spawn_interval)
@@ -261,12 +245,14 @@ class Jeu:
         frame = 0
         Step_Count = 0
 
+        '''
         for animation in Anim_Steps:
             Temp_Img_List = []
             for _ in range(animation):
                 Temp_Img_List.append(Sprite_Sheet.get_image(Step_Count, 24, 24, 3, BLACK))
                 Step_Count += 1
             Anim_List.append(Temp_Img_List)
+        '''
         #-----------------------------------------------------------Initialisation des animations, Elouan------------------------------------
         #-----------------------------------------------------------Déclaration de variables et autres, début-------------------------------------------------
         Timer = 0
@@ -279,6 +265,7 @@ class Jeu:
         # Boucle principale du jeu
         running = True
         clock = pygame.time.Clock()
+        dt = 0
         while running:
             # Gestion des événements
             for event in pygame.event.get():
@@ -320,18 +307,20 @@ class Jeu:
 
             # Mettre à jour les positions et les actions des PNJs existants
             for npc in npc_manager.npcs:
-                npc.move()
+                npc.update(dt)
 
             #update anim
+            '''
             Current_Time = pygame.time.get_ticks()
             if Current_Time - Last_Update >= Anim_CD:
                 frame += 1
                 Last_Update = Current_Time
                 if frame >= len(Anim_List[action]):
                     frame = 0
-
+            '''
+            
             # print les img
-            fenetre.blit(Anim_List[action][frame], (0, 0))
+            #fenetre.blit(Anim_List[action][frame], (0, 0))
 
             # Créé le collider du personnage après chaque déplacement
             personnage_Collider = pygame.Rect(position_x, position_y, PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR)
@@ -357,7 +346,7 @@ class Jeu:
             Deplacer_Camera()
 
             # Déplacer les PNJs
-            npc.move()
+            #npc.move()
 
             fenetre.fill((0,0,0))
 
@@ -387,7 +376,7 @@ class Jeu:
             pygame.display.update()
 
             # Limiter la vitesse de rafraîchissement à 60 FPS
-            clock.tick(60)
+            dt = clock.tick(60)
         #-----------------------------------------------------------Boucle de jeu du level, début, tout le monde--------------------------------------------------------
 
         # Quitter Pygame après la sortie de la boucle principale

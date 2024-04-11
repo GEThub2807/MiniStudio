@@ -5,6 +5,7 @@ from level1 import *
 import level2
 pygame.init()
 
+
 screen_info = pygame.display.Info()
 SCREEN_HEIGHT = screen_info.current_h
 SCREEN_WIDTH = SCREEN_HEIGHT * 16/9
@@ -73,6 +74,7 @@ def main_menu():
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     pygame.quit()
                     pygame.exit()
+
         pygame.display.update()
 
 def credit():
