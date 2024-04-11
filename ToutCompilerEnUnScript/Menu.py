@@ -19,8 +19,8 @@ jump_sound = pygame.mixer.Sound("Asset/SFX/jump.mp3")
 pygame.mixer.music.play()
 
 screen_info = pygame.display.Info()
-SCREEN_HEIGHT = screen_info.current_h
-SCREEN_WIDTH = SCREEN_HEIGHT * 16/9
+SCREEN_HEIGHT = 1080
+SCREEN_WIDTH = 1920
 FULLSCREEN = True
 
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
