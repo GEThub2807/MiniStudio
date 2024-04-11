@@ -1,6 +1,15 @@
-# Ajouter cette ligne à la fin de chaque boucle de jeu pour afficher le nb de FPS 
 
 
-self.ecran.blit(font.render("FPS: " + str(round(clock.get_fps(), 2)), 1, (0, 0, 0)), (Largeur de l' Ecran - nb assez petit, 0))
 
-#Largeur de l' Ecran - nb assez petit : Pour qu'il s'affiche dans le coin droit 
+# Mettre la def avant le début de la boucle de jeu
+
+def Print_FPS(self, fps):
+        pygame.draw.rect(self.ecran, (0, 0, 0), (1620, 0, 300, 50))
+        self.ecran.blit(font.render("FPS: " + fps, 1, (255, 255, 255)), (1630, 0))
+
+# A mettre avant qu'on actualise l'écran
+FPS = str(round(clock.get_fps(), 1))
+self.Print_FPS(FPS)
+
+
+Attention, mon code fait que je doit mettre self donc il faut peut etre l'enlever et renommer les variables nommés differemment
