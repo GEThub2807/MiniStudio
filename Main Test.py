@@ -49,23 +49,23 @@ class PlateformeBalcon(pygame.sprite.Sprite):
         #3 => Top
         #4 => Bottom 
 
-        if rect.right < self.Rect.left:
+        if rect.right < self.rect.left:
             return 0, 0
         
-        if rect.left > self.Rect.right:
+        if rect.left > self.rect.right:
             return 0, 0
         
-        if rect.top > self.Rect.bottom:
+        if rect.top > self.rect.bottom:
             return 0, 0
         
-        if rect.bottom < self.Rect.top:
+        if rect.bottom < self.rect.top:
             return 0, 0
 
         distances: list[int] = []
-        distances.append(abs(rect.right - self.Rect.left))
-        distances.append(abs(rect.left - self.Rect.right))
-        distances.append(abs(rect.bottom - self.Rect.top))
-        distances.append(abs(rect.top - self.Rect.bottom))
+        distances.append(abs(rect.right - self.rect.left))
+        distances.append(abs(rect.left - self.rect.right))
+        distances.append(abs(rect.bottom - self.rect.top))
+        distances.append(abs(rect.top - self.rect.bottom))
 
         minDistance = 2000
         side: int = 0
@@ -107,18 +107,17 @@ position_y = 400
 onGround = False
 player = pygame.Rect(position_x, position_y, PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR)
 
-# Position initiale du PNJ
+# Position initiale du PNJ + initialisation
 pnj_x = PNJ_DEPART_X
 pnj_y = PNJ_DEPART_Y
+direction_pnj = 1  # 1 pour droite, -1 pour gauche
+pnj_rect = pygame.Rect(pnj_x, pnj_y, PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR)
 
 # Variables de mouvement du personnage
 vitesse_x = 0
 vitesse_y = 0
 nombre_sauts = 0
 is_running = False  # Variable pour vérifier si la touche Shift est enfoncée
-
-# Variable de direction du PNJ
-direction_pnj = 1  # 1 pour droite, -1 pour gauche
 
 # Fonction de mouvement du personnage
 def deplacer_personnage():
@@ -142,38 +141,28 @@ def deplacer_personnage():
         onGround = True
 
 # Fonction de collision entre le personnage et le PNJ
-# Modifier la fonction de collision
-# Modifier la fonction de collision avec la plateforme
 def collision_pnj():
     global position_x, position_y, vitesse_x, vitesse_y, onGround
 
     # Vérifier la collision avec la plateforme
-    if PlateformCollision(pygame.Rect(x,y,PLATEFORME_LARGEUR,PLATEFORME_HAUTEUR), player): 
-        position_y = y - PERSONNAGE_HAUTEUR
-        onGround = True
-        vitesse_y = 0  # Arrêter le mouvement vertical
+    for plat in plateformes:
+        if plat.rect.colliderect(player):
+            position_y = plat.rect.top - PERSONNAGE_HAUTEUR
+            onGround = True
+            vitesse_y = 0  # Arrêter le mouvement vertical
+            break
     else:
         onGround = False  # Si le personnage n'est plus sur la plateforme, réinitialiser onGround
 
     # Même chose pour le mouvement vertical
     if vitesse_y > 0:
-        if position_x + PERSONNAGE_LARGEUR > pnj_x and position_x < pnj_x + PNJ_LARGEUR:
-            if position_y + PERSONNAGE_HAUTEUR > pnj_y and position_y < pnj_y + PNJ_HAUTEUR:
-                position_y = pnj_y - PERSONNAGE_HAUTEUR
-                vitesse_y = 0  # Arrêter le mouvement vertical
+        if player.colliderect(pnj_rect):
+            position_y = pnj_y - PERSONNAGE_HAUTEUR
+            vitesse_y = 0  # Arrêter le mouvement vertical
     elif vitesse_y < 0:
-        if position_x + PERSONNAGE_LARGEUR > pnj_x and position_x < pnj_x + PNJ_LARGEUR:
-            if position_y < pnj_y + PNJ_HAUTEUR and position_y + PERSONNAGE_HAUTEUR > pnj_y:
-                position_y = pnj_y + PNJ_HAUTEUR
-                vitesse_y = 0  # Arrêter le mouvement vertical
-
-def PlateformCollision(PlatRect, PlayerRect):
-        if (PlatRect.left + PlatRect.width >= PlayerRect.left and 
-            PlatRect.left <= PlayerRect.left + PlayerRect.width and
-            PlatRect.top + PlatRect.height >= PlayerRect.bottom - 10  and 
-            PlatRect.top <= PlayerRect.top + PlayerRect.height): #Collision avec le sol  
-            return True
-        return False
+        if player.colliderect(pnj_rect):
+            position_y = pnj_y + PNJ_HAUTEUR
+            vitesse_y = 0  # Arrêter le mouvement vertical
 
 # Boucle principale du jeu
 running = True
@@ -208,31 +197,14 @@ while running:
                     is_running = False
             elif event.key == K_SPACE and onGround:  # Réinitialiser le saut si le personnage est déjà sur le sol
                 nombre_sauts = 0
-            elif event.key == K_DOWN and PlateformCollision(pygame.Rect(x,y,PLATEFORME_LARGEUR,PLATEFORME_HAUTEUR), pygame.Rect(position_x,position_y,PERSONNAGE_LARGEUR,PERSONNAGE_HAUTEUR)): 
-                position_y = y + PLATEFORME_HAUTEUR  # Descendre du collider
+            elif event.key == K_DOWN:
+                for plat in plateformes:
+                    if plat.rect.colliderect(player):
+                        position_y = plat.rect.bottom
+                        break
+
     # Déplacer le personnage
     deplacer_personnage()
-
-    sides = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-
-    for i in plateformes: 
-
-        side, distance = i.GetCollision(player.playerRect)
-
-        if side == 0:
-            continue
-
-        side -= 1
-
-        if side == 3 and i.solidity == False:
-            continue
-
-        direction = sides[side]
-        player.posX += direction[0] * distance
-        player.posY += direction[1] * distance
-
-        if side == 2:
-            player.PlayerOnGround(i.Rect.top)
 
     # Déplacer le PNJ avec gestion de collision
     pnj_x += direction_pnj * 1
@@ -243,22 +215,15 @@ while running:
     # Vérifier la collision entre le personnage et le PNJ
     collision_pnj()
 
-    # Création des rectangles pour le personnage et le PNJ
-    personnage_rect = pygame.Rect(position_x, position_y, PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR)
-    pnj_rect = pygame.Rect(pnj_x, pnj_y, PNJ_LARGEUR, PNJ_HAUTEUR)
-
     # Afficher le fond à l'arrière-plan
     fenetre.blit(fond, (0, 0))
 
     # Afficher le personnage à sa position actuelle
     fenetre.blit(personnage, (position_x, position_y))
-    for plateforme in plateformes:
-        if PlateformCollision(plateforme.rect, personnage_rect):
-            position_y = plateforme.rect.top - PERSONNAGE_HAUTEUR
-            onGround = True
-            vitesse_y = 0
-    for position in plateforme_positions:
-        ajouter_plateforme(position[0], position[1])
+
+    # Afficher les plateformes
+    for plat in plateformes:
+        fenetre.blit(plat.image, plat.rect)
 
     # Afficher le PNJ à sa position actuelle
     fenetre.blit(pnj, (pnj_x, pnj_y))
