@@ -4,18 +4,22 @@ from pygame.locals import *
 # Constantes
 LARGEUR = 1920  # Largeur de la fenêtre du jeu
 HAUTEUR = 1080  # Hauteur de la fenêtre du jeu
+
+# Constantes JOUEUR
 GRAVITE = 0.5
 VITESSE_X = 5
 VITESSE_Y = 10
 VITESSE_COURSE = 10  # Vitesse de déplacement en mode course
 PERSONNAGE_LARGEUR = 100  # Largeur du personnage
 PERSONNAGE_HAUTEUR = 70  # Hauteur du personnage
-PNJ_LARGEUR = 70  # Largeur du personnage
-PNJ_HAUTEUR = 130 # Hauteur du personnage
+
+# Constantes PLATEFORME
 PLATEFORME_LARGEUR = 145  # Largeur de la plateforme
 PLATEFORME_HAUTEUR = 20  # Hauteur de la plateforme
 
 # Points de départ et d'arrivée du PNJ
+PNJ_LARGEUR = 70
+PNJ_HAUTEUR = 130
 PNJ_DEPART_X = 500
 PNJ_DEPART_Y = HAUTEUR - PNJ_HAUTEUR
 PNJ_ARRIVEE_X = 600
@@ -74,13 +78,13 @@ class PlateformeBalcon(pygame.sprite.Sprite):
         
         return side, minDistance
 
-    plateformes = []
+plateformes = []
 
-    plateforme_positions = [(35, HAUTEUR - PLATEFORME_HAUTEUR - 75),
-                            (465, HAUTEUR - PLATEFORME_HAUTEUR - 75),
-                            (850, HAUTEUR - PLATEFORME_HAUTEUR - 75),
-                            # Ajoutez autant de positions de plateformes que vous le souhaitez
-                            ]
+plateforme_positions = [(35, HAUTEUR - PLATEFORME_HAUTEUR - 75),
+                        (465, HAUTEUR - PLATEFORME_HAUTEUR - 75),
+                        (850, HAUTEUR - PLATEFORME_HAUTEUR - 75),
+                        # Ajoutez autant de positions de plateformes que vous le souhaitez
+                        ]
 
 def ajouter_plateforme(x, y):
     plateforme = PlateformeBalcon(x, y)
