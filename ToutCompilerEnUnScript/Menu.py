@@ -53,15 +53,15 @@ def main_menu():
         SCREEN.blit(MENU_TEXT, MENU_RECT)
 
         PLAY_BUTTON = EventHandle(image=pygame.image.load("Assets/Play Rect.png"), pos=play_button_pos,
-                                  text_input="PLAY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+                                text_input="PLAY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
         OPTIONS_BUTTON = EventHandle(image=pygame.image.load("Assets/Play Rect.png"), pos=options_button_pos,
-                                     text_input="OPTIONS", font=get_font(75), base_color="#d7fcd4",
-                                     hovering_color="White")
+                                    text_input="OPTIONS", font=get_font(75), base_color="#d7fcd4",
+                                    hovering_color="White")
         CREDIT_BUTTON = EventHandle(image=pygame.image.load("Assets/Play Rect.png"), pos=credit_button_pos,
                                     text_input="CREDIT", font=get_font(75), base_color="#d7fcd4",
                                     hovering_color="White")
         QUIT_BUTTON = EventHandle(image=pygame.image.load("Assets/Play Rect.png"), pos=quit_button_pos,
-                                  text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+                                text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
 
         for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON, CREDIT_BUTTON]:
             button.update(SCREEN)
@@ -115,7 +115,7 @@ def credit():
 
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
         OPTIONS_BACK = EventHandle(image=None, pos=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.44),
-                                   text_input="BACK", font=get_font(75), base_color="Black", hovering_color="Green")
+                                text_input="BACK", font=get_font(75), base_color="Black", hovering_color="Green")
         OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
 
         for event in pygame.event.get():
@@ -155,14 +155,14 @@ def options():
 
         if FULLSCREEN == True:
             OPTIONS_SCREEN_SIZE = EventHandle(image=None, pos=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.54),
-                                              text_input="FENETRER", font=get_font(75), base_color="Black",
-                                              hovering_color="Green")
+                                            text_input="FENETRER", font=get_font(75), base_color="Black",
+                                            hovering_color="Green")
         else:
             OPTIONS_SCREEN_FULL = EventHandle(image=None, pos=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.54),
-                                              text_input="PLEIN ECRAN", font=get_font(75), base_color="Black",
-                                              hovering_color="Green")
+                                            text_input="PLEIN ECRAN", font=get_font(75), base_color="Black",
+                                            hovering_color="Green")
         OPTIONS_BACK = EventHandle(image=None, pos=(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.44),
-                                   text_input="BACK", font=get_font(75), base_color="Black", hovering_color="Green")
+                                text_input="BACK", font=get_font(75), base_color="Black", hovering_color="Green")
 
         OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
         if FULLSCREEN == True:
