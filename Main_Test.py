@@ -120,9 +120,9 @@ def ajouter_plateforme(x, y):
     
 # Charger l'image du fond + joueur + PNJ
 try:    
-    fond = pygame.image.load("Asset/Rue_du_panier.png").convert_alpha()
+    fond = pygame.image.load("Asset/BG/Rue_du_panier.png").convert_alpha()
     fond = pygame.transform.scale(fond, (LARGEUR, HAUTEUR))
-    ground = pygame.image.load("Asset/SOL.png").convert_alpha()
+    ground = pygame.image.load("Asset/BG/SOL.png").convert_alpha()
     fenetre.blit(ground, (0, HAUTEUR - ground.get_height()))
     personnage = pygame.image.load("Assets/pnj.png").convert_alpha()
     personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
