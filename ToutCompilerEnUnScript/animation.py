@@ -1,9 +1,14 @@
 import pygame
 import spritesheet
 
+LARGEUR = 1920  # Largeur de la fenêtre du jeu
+HAUTEUR = 1080  # Hauteur de la fenêtre du jeu
+
 pygame.init()
 
 pygame.display.set_caption('Spritesheets')
+
+fenetre = pygame.display.set_mode((LARGEUR, HAUTEUR))
 
 sprite_sheet_image = pygame.image.load("Assets/anim.png").convert_alpha()
 sprite_sheet = spritesheet.SpriteSheet(sprite_sheet_image)

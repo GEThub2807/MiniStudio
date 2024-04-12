@@ -11,22 +11,21 @@ class Jeu:
     @staticmethod
     def run_game():
         # ------------------------------------------------------------Constantes début, tout le monde-----------------------------------------------------------------
+        BLACK = (0, 0, 0)
         LARGEUR = 1920  # Largeur de la fenêtre du jeu
-        HAUTEUR = 1080  # Hauteur de la fenêtre du jeu
+        HAUTEUR = 1080 # Hauteur de la fenêtre du jeu
         GRAVITE = 0.5
         VITESSE_X = 5
         VITESSE_Y = 10
         VITESSE_COURSE = 10  # Vitesse de déplacement en mode course
-        PERSONNAGE_LARGEUR = 50  # Largeur du personnage
-        PERSONNAGE_HAUTEUR = 50  # Hauteur du personnage
-        SPAWN_INTERVAL = 3  # Intervalle de spawn en secondes pour les PNJs
+        PERSONNAGE_LARGEUR = 500  # Largeur du personnage
+        PERSONNAGE_HAUTEUR = 500 # Hauteur du personnage
 
-        """ NPC_VITESSE = randint(-5, -3) if randint(0, 1) else randint(3, 5) """
-        NPC_VITESSE = -5
         # ------------------------------------------------------------Constante fin-----------------------------------------------------------------------------
 
         # crée variable score
         score = 0
+        action = 0
         # crée variable de collectibles requis
         Nb_Collectibles = 3
 
@@ -59,12 +58,12 @@ class Jeu:
         # ----------------------------------------------------Initialisation variables persos et cam, début, Valentin-------------------------------------
         # Position initiale du personnage
         position_x = 0
-        position_y = Length_Fond[1] - 501
+        position_y = Length_Fond[1] - PERSONNAGE_HAUTEUR
 
         # Variables de mouvement du personnage
         vitesse_x = 0
         vitesse_y = 0
-        nombre_sauts = 2
+        nombre_sauts = 1
         is_running = False  # Variable pour vérifier si la touche Shift est enfoncée
 
         # Position initiale de la caméra
@@ -75,9 +74,6 @@ class Jeu:
         CAMERA_LARGEUR = LARGEUR // 2
         CAMERA_HAUTEUR = HAUTEUR // 2
 
-        # Position initiale des pnjs
-        npc_pos_x = Length_Fond[0]
-        npc_pos_y = Length_Fond[1] - 300
         # ----------------------------------------------------Initialisation variables persos et cam, Fin-------------------------------------
         # ------------------------------------------------------Initialisation des collectibles,début, Timothé------------------------------------------
         Jeu.coins_image = pygame.image.load("Assets/coins.png").convert()
@@ -91,8 +87,9 @@ class Jeu:
         # ------------------------------------------------------Initialisation des collectibles,Fin, Timothé------------------------------------------
         # --------------------------------------------------------Système basiques du jeu, Début, Valentin, Antoine-------------------------------------
         # Fonction de mouvement du personnage
-        def Deplacer_Personnage():
-            nonlocal position_x, position_y, vitesse_x, vitesse_y, nombre_sauts
+        # Fonction de mouvement du personnage
+        def Deplacer_Personnage(event):
+            nonlocal position_x, position_y, vitesse_x, vitesse_y, nombre_sauts, action
 
             # Appliquer la gravité au personnage
             vitesse_y += GRAVITE
@@ -102,12 +99,18 @@ class Jeu:
             position_y += vitesse_y
 
             # Limiter la position du personnage à l'écran
-            position_x = max(0, min(position_x, Length_Fond[0] - PERSONNAGE_LARGEUR))
-            position_y = max(0, min(position_y, Length_Fond[1] - PERSONNAGE_HAUTEUR - 300))
+            position_x = max(0 - 200, min(position_x, Length_Fond[0] - 300))
+            position_y = max(0 - 200, min(position_y, Length_Fond[1] - PERSONNAGE_HAUTEUR + 80))
 
             # Réinitialiser le nombre de sauts si le personnage est au sol
-            if position_y >= Length_Fond[1] - PERSONNAGE_HAUTEUR - 500:
+            if position_y >= Length_Fond[1] - PERSONNAGE_HAUTEUR + 80:
                 nombre_sauts = 0
+
+            # Vérifier si la touche espace est enfoncée et si le nombre de sauts est inférieur à 2
+            if event.type == KEYDOWN and event.key == K_SPACE and nombre_sauts < 2:
+                action = 1  # Mettre à jour la variable action pour afficher l'animation de saut
+                vitesse_y = -VITESSE_Y
+                nombre_sauts += 1
 
         # Fonction pour déplacer la caméra
         def Deplacer_Camera():
@@ -131,9 +134,9 @@ class Jeu:
             camera_x += delta_x * 0.1
             camera_y += delta_y * 0.1
 
-        def Print_FPS(fps):
-            pygame.draw.rect(fenetre, (0, 0, 0), (1620, 0, 300, 50))
-            fenetre.blit(font.render("FPS: " + fps, 1, (255, 255, 255)), (1630, 0))
+        #def Print_FPS(fps):
+        #    pygame.draw.rect(fenetre, (0, 0, 0), (1620, 0, 300, 50))
+        #    fenetre.blit(font.render("FPS: " + fps, 1, (255, 255, 255)), (1630, 0))
 
         # --------------------------------------------------------Système basiques du jeu, Fin, Valentin, Antoine-------------------------------------
         # -----------------------------------------------------------Systèmes des NPC, Début, Antoine---------------------------------------------
@@ -164,10 +167,8 @@ class Jeu:
                 self.sprite.draw(screen, self.pos_x - camera_x, self.pos_y - camera_y)
 
             def destroy(self):
-                # Code pour détruire le NPC
-                self.pos_x = -1000  # Déplacer le NPC hors de l'écran
-                self.pos_y = -1000
-                self.velocity = 0  # Arrêter le mouvement
+                # Supprimer le PNJ du tableau quand il sort de l'écran
+                npc_manager.npcs.remove(self)
 
         # Créer une instance de la classe NPC
         npc_assets_folder = ["Asset/PNJ_Bm", "Asset/PNJ_Sardine", "Asset/PNJ_Seagull"]
@@ -194,7 +195,7 @@ class Jeu:
 
             def spawn_npc(self):
                 # Coordonnées initiales aléatoires dans les limites de l'écran
-                initial_x = LARGEUR + Length_Fond[0] - camera_x  # Utiliser lengthNpc pour obtenir la taille du PNJ
+                initial_x = Length_Fond[0] # Utiliser lengthNpc pour obtenir la taille du PNJ
                 spawn_y = Length_Fond[1] - 500
                 velocity = 5
 
@@ -207,7 +208,7 @@ class Jeu:
         # -----------------------------------------------------------Systèmes des NPC, Fin, Antoine---------------------------------------------
 
         # -----------------------------------------------------------Systèmes des plateformes, Début, Timothé---------------------------------------------
-        class Plateformes:
+        """ class Plateformes:
             def __init__(self):
                 self.plateformes_image = pygame.image.load("Assets/Plateformes.png").convert()
                 self.plateformes_image = pygame.transform.scale(self.plateformes_image, (50, 50))
@@ -237,7 +238,7 @@ class Jeu:
                         fenetre.blit(self.plateformes_list[j].image,
                                      (self.plateformes_list[j].x, self.plateformes_list[j].y))
 
-        plateformes_instance = Plateformes()
+        plateformes_instance = Plateformes() """
 
         # -----------------------------------------------------------Systèmes des plateformes, Fin, Timothé---------------------------------------------
         # -----------------------------------------------------------Initialisation des animations, début, Elouan------------------------------------
@@ -249,14 +250,13 @@ class Jeu:
         frame = 0
         Step_Count = 0
 
-        '''
-        for animation in Anim_Steps:
+        """for animation in Anim_Steps:
             Temp_Img_List = []
             for _ in range(animation):
                 Temp_Img_List.append(Sprite_Sheet.get_image(Step_Count, 24, 24, 3, BLACK))
                 Step_Count += 1
-            Anim_List.append(Temp_Img_List)
-        '''
+            Anim_List.append(Temp_Img_List) """
+        
         # -----------------------------------------------------------Initialisation des animations, Elouan------------------------------------
         # -----------------------------------------------------------Déclaration de variables et autres, début-------------------------------------------------
         Timer = 0
@@ -278,26 +278,34 @@ class Jeu:
                 elif event.type == KEYDOWN:
                     if event.key == K_LEFT:
                         vitesse_x = -VITESSE_X
+                        Deplacer_Personnage(event)
                     elif event.key == K_RIGHT:
                         vitesse_x = VITESSE_X
+                        Deplacer_Personnage(event)
                     elif event.key == K_SPACE and nombre_sauts < 2:
                         vitesse_y = -VITESSE_Y
                         nombre_sauts += 1
+                        Deplacer_Personnage(event)
                     elif event.key == K_LSHIFT or event.key == K_RSHIFT:
                         if not is_running:
                             VITESSE_X = VITESSE_COURSE
                             is_running = True  # La touche Shift est enfoncée
+                            Deplacer_Personnage(event)
                     elif event.key == K_ESCAPE:
                         running = False
+                        Deplacer_Personnage(event)
                 elif event.type == KEYUP:
                     if event.key == K_LEFT and vitesse_x < 0:
                         vitesse_x = 0
+                        Deplacer_Personnage(event)
                     elif event.key == K_RIGHT and vitesse_x > 0:
                         vitesse_x = 0
+                        Deplacer_Personnage(event)
                     elif event.key == K_LSHIFT or event.key == K_RSHIFT:
                         if is_running:
                             VITESSE_X = 5
                             is_running = False  # La touche Shift est relâchée
+                            Deplacer_Personnage(event)
                 elif event.type == USEREVENT:
                     Timer += 1
 
@@ -313,14 +321,14 @@ class Jeu:
                 npc.update(dt)
 
             # update anim
-            '''
-            Current_Time = pygame.time.get_ticks()
+            
+            """ Current_Time = pygame.time.get_ticks()
             if Current_Time - Last_Update >= Anim_CD:
                 frame += 1
                 Last_Update = Current_Time
                 if frame >= len(Anim_List[action]):
                     frame = 0
-            '''
+             """
 
             # print les img
             # fenetre.blit(Anim_List[action][frame], (0, 0))
@@ -340,9 +348,6 @@ class Jeu:
             for c in Jeu.coins_list:
                 fenetre.blit(Jeu.coins_image, (c[0], c[1]))
 
-            # Déplacer le personnage
-            Deplacer_Personnage()
-
             # Déplacer la caméra
             Deplacer_Camera()
 
@@ -355,13 +360,18 @@ class Jeu:
             fenetre.blit(fond, (0 - camera_x, 0 - camera_y))
 
             # Afficher le personnage à sa position actuelle (par rapport à la caméra)
-            fenetre.blit(personnage, (position_x - camera_x, position_y - camera_y))
+            if action == 0:
+                fenetre.blit(personnage, (position_x - camera_x, position_y - camera_y))
+            else:
+                # Afficher l'animation de saut
+                fenetre.blit(Anim_List[action][frame], (position_x - camera_x, position_y - camera_y))
 
-            if Loop % 2 == 0:
+
+            """ if Loop % 2 == 0:
                 plateformes_instance.Afficher_Plateformes_Paires()
 
             else:
-                plateformes_instance.Afficher_Plateformes_Impaires()
+                plateformes_instance.Afficher_Plateformes_Impaires() """
 
             # Afficher les PNJs
             for npc in npc_manager.npcs:
@@ -372,7 +382,7 @@ class Jeu:
             fenetre.blit(font.render(str(score) + "/" + str(Nb_Collectibles), 1, (255, 255, 255)), (5, 5))
 
             FPS = str(round(clock.get_fps(), 1))
-            Print_FPS(FPS)
+            #Print_FPS(FPS)
 
 
             # Mettre à jour l'affichage

@@ -21,7 +21,7 @@ class Jeu:
         VITESSE_Y = 10
         VITESSE_COURSE = 10  # Vitesse de déplacement en mode course
         PERSONNAGE_LARGEUR = 100  # Largeur du personnage
-        PERSONNAGE_HAUTEUR = 70  # Hauteur du personnage
+        PERSONNAGE_HAUTEUR = 70  # Hauteur du personnag
         GREEN = (144, 201, 120)
         scroll = 0
 
@@ -357,6 +357,11 @@ class Jeu:
                     return True
                 return False
 
+
+
+
+
+
         # Creates the text box into an image then includes it into the scene
         def displayTextPrint(text, font, textColor, x, y, fenetre):
             img = font.render(text, True, textColor)
@@ -402,7 +407,11 @@ class Jeu:
                 # Display QCM
                 for x in range(arrayLength):
                     displayTextPrint(enfantChoix[x], textFont, textColor, pos_intro_x, pos_intro_y + x*spacing, fenetre)
-            
+
+
+
+
+
             for event in pygame.event.get():
                 if event.type == QUIT:
                     running = False
@@ -421,7 +430,14 @@ class Jeu:
                             is_running = True
                     elif event.key == K_ESCAPE:
                         running = False
-                    
+
+
+
+
+
+
+
+
                     # There has to be a better way than this, but i cant figure it out so this is fine
                     # Dialogue intro
                     elif event.key == interactKey and len(Introduction) != count and playIntro == True:
@@ -503,6 +519,11 @@ class Jeu:
                             afficherTexte = False
                             count = -1
                             enfantSuccesDialogue = False
+
+
+
+
+
 
                 elif event.type == KEYUP:
                     if event.key == K_LEFT and vitesse_x < 0:

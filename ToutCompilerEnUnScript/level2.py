@@ -101,14 +101,14 @@ def run_game():
                             (902, HAUTEUR - PLATEFORME_HAUTEUR - 288),  # 10
                             (685, HAUTEUR - PLATEFORME_HAUTEUR - 288),  # 11
                             (482, HAUTEUR - PLATEFORME_HAUTEUR - 308),  # 12
-                            (252, HAUTEUR - PLATEFORME_HAUTEUR - 308),  # 13
+                            (252, HAUTEUR - PLATEFORME_HAUTEUR - 200),  # 13
                             (35, HAUTEUR - PLATEFORME_HAUTEUR - 308),  # 14
                             (35, HAUTEUR - PLATEFORME_HAUTEUR - 515),  # 15
                             (252, HAUTEUR - PLATEFORME_HAUTEUR - 515),  # 16
                             (482, HAUTEUR - PLATEFORME_HAUTEUR - 515),  # 17
                             (685, HAUTEUR - PLATEFORME_HAUTEUR - 520),  # 18
                             (902, HAUTEUR - PLATEFORME_HAUTEUR - 520),  # 19
-                            (1410, HAUTEUR - PLATEFORME_HAUTEUR - 490),  # 20
+                            (1410, HAUTEUR - PLATEFORME_HAUTEUR - 350),  # 20
                             (1518, HAUTEUR - PLATEFORME_HAUTEUR - 490),  # 20-2
                             (1217, HAUTEUR - PLATEFORME_HAUTEUR - 490),  # 21
                             (1112, HAUTEUR - PLATEFORME_HAUTEUR - 490),  # 21-2
@@ -122,7 +122,7 @@ def run_game():
 
     # Charger l'image du fond + joueur + PNJ
     try:
-        fond = pygame.image.load("Asset/BG/Rue_du_panier.png").convert_alpha()
+        fond = pygame.image.load("Assets/BG5.png").convert_alpha()
         fond = pygame.transform.scale(fond, (LARGEUR, HAUTEUR))
         personnage = pygame.image.load("Asset/SFX/pnj.png").convert_alpha()
         personnage = pygame.transform.scale(personnage, (PERSONNAGE_LARGEUR, PERSONNAGE_HAUTEUR))
@@ -203,16 +203,16 @@ def run_game():
         if (PlatRect.left + PlatRect.width >= PlayerRect.left and
                 PlatRect.left <= PlayerRect.left + PlayerRect.width and
                 PlatRect.top + PlatRect.height >= PlayerRect.bottom - 10 and
-                PlatRect.top <= PlayerRect.top + PlayerRect.height):  # Collision avec le sol  
+                PlatRect.top <= PlayerRect.top + PlayerRect.height):  # Collision avec le sol
             return True
         return False
 
     # Charge la police d'écriture installé
     font = pygame.font.Font("Asset/SFX/Parisish.ttf", 50)
 
-    def Print_FPS(fps):
-        pygame.draw.rect(fenetre, (0, 0, 0), (1620, 0, 300, 50))
-        fenetre.blit(font.render("FPS: " + fps, 1, (255, 255, 255)), (1630, 0))
+    #def Print_FPS(fps):
+    #    pygame.draw.rect(fenetre, (0, 0, 0), (1620, 0, 300, 50))
+    #    fenetre.blit(font.render("FPS: " + fps, 1, (255, 255, 255)), (1630, 0))
 
     # Boucle principale du jeu
     running = True
@@ -285,8 +285,8 @@ def run_game():
         # Afficher le PNJ à sa position actuelle
         fenetre.blit(pnj, (pnj_x, pnj_y))
 
-        FPS = str(round(clock.get_fps(), 1))
-        Print_FPS(FPS)
+        #FPS = str(round(clock.get_fps(), 1))
+        #Print_FPS(FPS)
 
         # Mettre à jour l'affichage
         pygame.display.flip()
